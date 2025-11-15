@@ -38,7 +38,8 @@ exports.createUser = (req, res) => {
           false,
           verificationToken,
         ]);
-      //const verifyUrl = `http://localhost:4000/api/auth/verify/${verificationToken}`;
+      const sqlProfile = "INSERT INTO user_profiles (reg_no) VALUES (?)";
+      await db.promise().query(sqlProfile, [reg]);
       await sendEmail(
         email,
         "Verify Your Account",
@@ -61,7 +62,7 @@ exports.login = (req, res) => {
       .status(400)
       .json({ message: "Email and Password must be needed.." });
   }
-  db.query("SELECT * FROM users WHERE email = ?", [email], (error, results) => {
+  db.query("SELECT * FROM users WHERE email = ?", [email], async(error, results) => {
     if (error) {
       return res.status(500).json(error);
     }
@@ -74,7 +75,7 @@ exports.login = (req, res) => {
         .status(403)
         .json({ message: "Please verify your email before logging in." });
     }
-    const isMatch = bcrypt.compare(password, user.password_hash);
+    const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid password." });
     }
@@ -137,7 +138,7 @@ exports.forgetPassword = async(req, res) => {
             return res.status(400).json({message: "Email not found.."});
         }
         const resetToken = crypto.randomInt(100000, 1000000).toString();
-        await db.promise().query("UPDATE users SET reset_token ? WHERE email = ?", [resetToken], [email]);
+        await db.promise().query("UPDATE users SET reset_token = ? WHERE email = ?", [resetToken ,email]);
         await sendEmail(
             email,
             "Reset your password",
@@ -163,8 +164,8 @@ exports.resetPassword =  async(req, res) => {
             return res.status(400).json({message : "Invalid token"});
         }
         const user = results[0];
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await db.promise().query("UPDATE users SET password_hash = WHERE reg_no?", [hashedPassword], [user.reg_no]);
+        const hashedPassword = await bcrypt.hash(confirmPassword, 10);
+        await db.promise().query("UPDATE users SET password_hash = ? , reset_token = NULL WHERE reg_no = ?", [hashedPassword, user.reg_no]);
         res.status(200).json({message : "Password updated successfully"});
     });
 };
