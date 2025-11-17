@@ -129,7 +129,7 @@ exports.verifyEmail = async (req, res) => {
               .status(500)
               .json({ message: "Database error while updating user." });
 
-          res.send("<h1>Email verified successfully! You can now log in.</h1>");
+          res.send(`<h1>Email verified successfully! You can now log in.</h1>`);
         }
       );
     }

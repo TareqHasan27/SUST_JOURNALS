@@ -22,9 +22,15 @@ CREATE TABLE user_profiles (
     department_id INT,
     profile_url VARCHAR(255),
     bio TEXT,
-    research_interests TEXT,
     google_scholar_id VARCHAR(255),
     orcid_id VARCHAR(50),
     FOREIGN KEY (reg_no) REFERENCES users(reg_no),
     FOREIGN KEY (department_id) REFERENCES departments(id)
+);
+
+CREATE TABLE user_research_interests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reg_no VARCHAR(20),
+    interest VARCHAR(255),
+    FOREIGN KEY (reg_no) REFERENCES users(reg_no)
 );
