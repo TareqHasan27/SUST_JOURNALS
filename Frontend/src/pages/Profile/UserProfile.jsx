@@ -65,13 +65,13 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen  bg-blue-50 px-4 py-10">
-      <div className="flex space-y-1 justify-center space-x-1 items-start sm:flex-row flex-col">
-        <div className="mx-auto w-full space-y-6 mt-1.5">
+      <div className="flex  space-y-1 justify-center space-x-1 items-start sm:flex-row flex-col">
+        <div className="mx-auto w-2/3 space-y-6 mt-1.5">
           <ProfileHeader profile={profile} />
           <Bio bio={profile.bio} />
           <PublicationsList publications={profile.publications} />
         </div>
-        <div className="w-full ml-8 space-y-6">
+        <div className="w-1/3 ml-8 space-y-6">
            <h2 className="text-lg font-bold mb-15 text-gray-700">Citations per Year</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={citationsPerYear}>
