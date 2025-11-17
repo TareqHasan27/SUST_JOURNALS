@@ -3,7 +3,7 @@ import ProfileHeader from "./profileComponents/ProfileHeader";
 import ProfileStats from "./profileComponents/ProfileStats";
 import PublicationsList from "./profileComponents/PublicationsList";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import StatCard from "./profileComponents/StatCard";
+import Bio from "./profileComponents/Bio";
 
 
 // ✅ Mock data (replace with backend later)
@@ -35,6 +35,7 @@ const mockProfile = {
       citedBy: 6,
     },
   ],
+  bio: "Dr. Anshita is a dedicated research scholar specializing in inhalation toxicology and particle dosimetry. Her work focuses on understanding the health impacts of airborne particles and advancing safe exposure systems.",
 };
 
 const UserProfile = () => {
@@ -63,14 +64,14 @@ const UserProfile = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-blue-50 px-6 py-10">
-      <div className="flex w-full  space-y-8 ">
-        <div className="mx-auto space-y-6">
+    <div className="min-h-screen  bg-blue-50 px-4 py-10">
+      <div className="flex space-y-1 justify-center space-x-1 items-start sm:flex-row flex-col">
+        <div className="mx-auto w-full space-y-6 mt-1.5">
           <ProfileHeader profile={profile} />
-          <ProfileStats stats={profile.stats} />
+          <Bio bio={profile.bio} />
           <PublicationsList publications={profile.publications} />
         </div>
-        <div className="w-full md:w-1/3 lg:w-1/4 ml-8 space-y-6">
+        <div className="w-full ml-8 space-y-6">
            <h2 className="text-lg font-bold mb-15 text-gray-700">Citations per Year</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={citationsPerYear}>
@@ -80,6 +81,7 @@ const UserProfile = () => {
               <Bar dataKey="citations" fill="#808080" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
+          <ProfileStats stats={profile.stats} />
         </div>
       </div>
     </div>

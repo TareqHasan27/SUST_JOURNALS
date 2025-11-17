@@ -7,7 +7,7 @@ const ProfileStats = ({ stats }) => {
   console.log("Award icon is:", Award);
   console.log("TrendingUp icon is:", TrendingUp);
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
 
 
       <StatCard label="Citations" value={stats.citations} icon={Award} color="bg-green-500" />
