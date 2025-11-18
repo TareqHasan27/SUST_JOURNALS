@@ -40,7 +40,7 @@ const Login = () => {
     try {
       setIsLoading(true);
       const res = await axios.post(
-        `http://localhost:8000/user/login`,
+        `http://localhost:4000/api/auth/login`,
         formData,
         {
           headers: {
@@ -48,15 +48,15 @@ const Login = () => {
           },
         }
       );
-      if (res.data.success) {
+      if (res.data) {
         setUser(res.data.user);
-        localStorage.setItem("accessToken", res.data.accessToken);
+        localStorage.setItem("accessToken", res.data.token);
         console.log(
           "toke from localstorage",
           localStorage.getItem("accessToken")
         );
-        toast.success(res.data.message);
-        res.data.user.isVerified ? navigate("/home") : navigate("/verify");
+        toast.success(res.data.message );
+        res.data.user ? navigate("/") : navigate("/verify");
       }
     } catch (error) {
       console.log(error);
@@ -149,16 +149,6 @@ const Login = () => {
                   ) : (
                     "Login"
                   )}
-                </Button>
-                <Button
-                  onClick={() =>
-                    window.open("http://localhost:8000/auth/google", "_self")
-                  }
-                  className="w-full"
-                  variant="outline"
-                >
-                  <img src={Google} alt="" className="w-5" />
-                  Login with Google
                 </Button>
               </CardFooter>
             </Card>

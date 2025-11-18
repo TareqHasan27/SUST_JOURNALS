@@ -20,11 +20,11 @@ const ForgotPassword = () => {
         e.preventDefault()
         try {
             setIsLoading(true)
-            const res = await axios.post(`http://localhost:8000/user/forgot-password`, {
+            const res = await axios.post(`http://localhost:4000/api/auth/forgotpassword`, {
                 email
             });
-            if(res.data.success){
-             navigate(`/verify-otp/${email}`)
+            if(res.data){
+             navigate(`/verify/change-password`)
              toast.success(res.data.message)
              setEmail("")
             }

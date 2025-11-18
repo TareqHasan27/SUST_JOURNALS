@@ -7,7 +7,7 @@ import { CheckCircle, Loader2, RotateCcw } from 'lucide-react'
 import React, { useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
-const VerifyOTP = () => {
+const VerifyOtpFromSignup = () => {
   const [isVerified, setIsVerified] = useState(false)
   const [error, setError] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
@@ -50,7 +50,7 @@ const VerifyOTP = () => {
       setIsVerified(true)
       setSuccessMessage(res.data?.message || 'Code verified successfully')
         console.log(cameFrom)
-        setTimeout(() => navigate(`/change-password/${email}`), 1500)
+     setTimeout(() => navigate(`/login`), 1500)
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong')
     } finally {
@@ -172,4 +172,4 @@ const VerifyOTP = () => {
   )
 }
 
-export default VerifyOTP
+export default VerifyOtpFromSignup

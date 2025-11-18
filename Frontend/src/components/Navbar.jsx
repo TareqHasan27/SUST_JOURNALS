@@ -1,10 +1,13 @@
 import {
-    BookA, Target, LogOut, User, Home, Briefcase,
-    FolderOpen, Menu, X
+    BookA, Target, LogOut, User, Home, Briefcase, GraduationCap,
+    FolderOpen, Menu, X, ShieldHalf ,Send ,BookmarkCheck, 
+    Award
+    
 } from 'lucide-react'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
+
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -24,21 +27,10 @@ const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false)
 
     const logoutHandler = async () => {
-        try {
-            const res = await axios.post(`http://localhost:8000/user/logout`, {}, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            })
-            if (res.data.success) {
                 setUser(null)
                 toast.success(res.data.message)
                 localStorage.clear()
                 navigate('/')
-            }
-        } catch (error) {
-            console.log(error)
-        }
     }
     const profilehandler = () => {
         navigate('/user/profile')
@@ -53,17 +45,18 @@ const Navbar = () => {
 
                 {/* Logo */}
                 <Link to='/' className='flex gap-2 items-center'>
-                    <Target className='h-6 w-6 text-green-800' />
+                    <GraduationCap className='h-6 w-6 text-green-800' />
                     <h1 className='font-bold text-xl'>
-                        <span className='text-green-600'>Next</span>Step
+                        <span className='text-green-600'>SUST</span>JOURNALS
                     </h1>
                 </Link>
 
                 {/* Desktop Menu */}
                 <ul className='hidden md:flex gap-7 items-center text-lg font-semibold text-green-800'>
-                    <li><Link to='/suggested-jobs' className='hover:text-green-600 flex items-center gap-1'><Home className='w-4 h-4' /> Suggested Jobs</Link></li>
-                    <li><Link to='/find-jobs' className='hover:text-green-600 flex items-center gap-1'><Briefcase className='w-4 h-4' /> Find Jobs</Link></li>
-                    <li><Link to='/suggested-resources' className='hover:text-green-600 flex items-center gap-1'><FolderOpen className='w-4 h-4' />Recomanded Resources</Link></li>
+                    <li><Link to='/suggested-jobs' className='hover:text-green-600 flex items-center gap-1'><Award  className='w-4 h-4' /> Ranking</Link></li>
+                    <li><Link to='/find-jobs' className='hover:text-green-600 flex items-center gap-1'><Briefcase className='w-4 h-4' /> Publications</Link></li>
+                    <li><Link to='/suggested-resources' className='hover:text-green-600 flex items-center gap-1'><Send  className='w-4 h-4' />Submit Papaer</Link></li>
+                    <li><Link to='/suggested-resources' className='hover:text-green-600 flex items-center gap-1'><Send  className='w-4 h-4' />Store</Link></li>
 
                     {/* User Dropdown */}
                     {user ? (

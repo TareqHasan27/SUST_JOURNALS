@@ -30,12 +30,11 @@ const ChangePassword = () => {
 
         try {
             setIsLoading(true)
-            const res = await axios.post(`http://localhost:8000/user/change-password/${email}`, {
+            const res = await axios.post(`http://localhost:4000/api/auth/reset`, {
                 newPassword,
                 confirmPassword
             })
-
-            setSuccess(res.data.message)
+            setSuccess(res.data)
             setTimeout(() => {
                 navigate('/login')
             }, 2000)

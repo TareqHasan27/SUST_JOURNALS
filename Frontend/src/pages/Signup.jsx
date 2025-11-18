@@ -20,9 +20,10 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    username: "",
+    reg_no: "",
     email: "",
     password: "",
+    role:""
   });
 
   const handleChange = (e) => {
@@ -39,7 +40,7 @@ const Signup = () => {
     try {
       setIsLoading(true);
       const res = await axios.post(
-        `http://localhost:8000/user/register`,
+        `http://localhost:4000/api/auth/register`,
         formData,
         {
           headers: {
@@ -47,8 +48,8 @@ const Signup = () => {
           },
         }
       );
-      if (res.data.success) {
-        navigate("/verify");
+      if (res.data) {
+        navigate("/verify/signup");
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -82,14 +83,14 @@ const Signup = () => {
               <CardContent>
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-2">
-                    <Label htmlFor="full name">Full Name</Label>
+                    <Label htmlFor="full name">Reg No</Label>
                     <Input
-                      id="full name"
-                      name="username"
-                      value={formData.username}
+                      id="reg_no"
+                      name="reg_no"
+                      value={formData.reg_no}
                       onChange={handleChange}
                       type="text"
-                      placeholder="Enter your full name"
+                      placeholder="Enter your Reg No"
                       required
                     />
                   </div>
@@ -101,7 +102,7 @@ const Signup = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="m@example.com"
+                      placeholder="2021..@student.sust.edu"
                       required
                     />
                   </div>
@@ -132,6 +133,18 @@ const Signup = () => {
                       </Button>
                     </div>
                   </div>
+                  <select 
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange} 
+                    className="border border-gray-300 rounded-md p-2"
+                    required
+                  >
+                    <option value="" disabled>Select your role</option>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                  </select>
+                  
                 </div>
               </CardContent>
               <CardFooter className="flex-col gap-2">
@@ -165,3 +178,5 @@ const Signup = () => {
 };
 
 export default Signup;
+
+
