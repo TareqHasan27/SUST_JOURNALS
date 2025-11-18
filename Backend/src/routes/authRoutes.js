@@ -4,7 +4,7 @@ const { createUser, login, verifyEmail, forgetPassword, resetPassword } = requir
 const router = express.Router();
 router.post("/register", createUser);
 router.post("/login",login);
-router.get("/verify/:token", verifyEmail);
+router.post("/verify-otp", verifyEmail);
 router.post("/forgotpassword", forgetPassword);
 router.post("/reset", resetPassword);
 

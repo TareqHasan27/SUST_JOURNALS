@@ -3,12 +3,13 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Hero from "./components/Hero";
 import AppLayout from "./layouts/AppLayout";
 import Signup from "./pages/Signup";
-import VerifyEmail from "./pages/VerifyEmail";
-import Verify from "./pages/Verify";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyOTP from "./pages/VerifyOTP";
 import ChangePassword from "./pages/ChangePassword";
+import VerifyOtpFromSignup from "./pages/VerifyOtpFromSignup";
+import AuthorRankingSystem from "./pages/ranking/AuthorCard";
+import BookmarkSection from "./pages/bookmarks/BookMarks";
 const router = createBrowserRouter([
   {
     element: <AppLayout />, 
@@ -24,12 +25,12 @@ const router = createBrowserRouter([
         element: <Signup/>
       },
       {
-        path: '/verify',
-        element: <VerifyEmail />
+        path: '/verify/change-password',
+        element: <VerifyOTP/>
       },
       {
-        path: '/verify/:token',
-        element: <Verify />
+        path: '/verify/signup',
+        element: <VerifyOtpFromSignup/>
       },
       {
         path: '/login',
@@ -40,12 +41,15 @@ const router = createBrowserRouter([
         element: <ForgotPassword />
       },
       {
-        path: '/verify-otp/:email',
-        element: <VerifyOTP />
-      },
-      {
         path: '/change-password/:email',
         element: <ChangePassword />
+      },{
+        path:'/ranking',
+        element:<AuthorRankingSystem></AuthorRankingSystem>
+      },
+      {
+        path:'/bookmarks',
+        element:<BookmarkSection></BookmarkSection>
       }
 ]);
 const App = () => {

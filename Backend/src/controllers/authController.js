@@ -7,6 +7,7 @@ const { error } = require("console");
 exports.createUser = (req, res) => {
   const { reg_no, email, password, role } = req.body;
   if (!reg_no || !email || !password || !role) {
+      console.log("Missing fields");
     return res.status(400).json({ message: "All fields are required" });
   }
   db.query(
@@ -91,13 +92,13 @@ exports.login = (req, res) => {
 };
 
 exports.verifyEmail = async (req, res) => {
-  const { token } = req.params;
+  const { otp } = req.body;
 
-  if (!token) return res.status(400).json({ message: "Token missing." });
+  if (!otp) return res.status(400).json({ message: "Token missing." });
 
   db.query(
     "SELECT * FROM users WHERE verificationToken = ?",
-    [token],
+    [otp],
     (err, results) => {
       if (err) return res.status(500).json({ message: "Database error." });
       if (results.length === 0)
@@ -169,3 +170,6 @@ exports.resetPassword =  async(req, res) => {
         res.status(200).json({message : "Password updated successfully"});
     });
 };
+
+
+
