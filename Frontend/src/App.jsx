@@ -10,6 +10,7 @@ import ChangePassword from "./pages/ChangePassword";
 import VerifyOtpFromSignup from "./pages/VerifyOtpFromSignup";
 import AuthorRankingSystem from "./pages/ranking/AuthorCard";
 import BookmarkSection from "./pages/bookmarks/BookMarks";
+import PaperSubmissionForm from "./pages/submitpaper/SubmitPaper";
 const router = createBrowserRouter([
   {
     element: <AppLayout />, 
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path:'/bookmarks',
         element:<BookmarkSection></BookmarkSection>
+      },
+      {
+        path:'/submit-paper',
+        element:<PaperSubmissionForm></PaperSubmissionForm>
       }
 ]);
 const App = () => {

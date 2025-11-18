@@ -2,8 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const authRouter = require("./routes/authRoutes");
-const userRouter = require("../src/routes/userRoutes");
+// const authRouter = require("./routes/authRoutes");
+// const userRouter = require("../src/routes/userRoutes");
 const pdfUploadRouter = require("./routes/pdfUploadRoutes");
 
 const app = express();
@@ -13,8 +13,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use("/api/auth", authRouter);
-app.use("/api/profile",userRouter);
+// app.use("/api/auth", authRouter);
+// app.use("/api/profile",userRouter);
 app.use("/api/pdf", pdfUploadRouter);
 
 app.listen(PORT, () => {
