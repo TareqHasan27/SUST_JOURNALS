@@ -11,8 +11,13 @@ import VerifyOtpFromSignup from "./pages/VerifyOtpFromSignup";
 import AuthorRankingSystem from "./pages/ranking/AuthorCard";
 import BookmarkSection from "./pages/bookmarks/BookMarks";
 import PaperSubmissionForm from "./pages/submitpaper/SubmitPaper";
+<<<<<<< HEAD
 import ChatbotButton from "./pages/chatbot/ChatbotButton";
 import ChatbotPage from "./pages/chatbot/ChatbotPage";
+=======
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import ResearchPaperDisplay from "./pages/Article/ResearchPaperDisplay";
+>>>>>>> cfcc26f45e34d2a2d8c7a743959eecdbcf54c049
 const router = createBrowserRouter([
   {
     element: <AppLayout />, 
@@ -59,8 +64,17 @@ const router = createBrowserRouter([
         element:<PaperSubmissionForm></PaperSubmissionForm>
       },
       {
+<<<<<<< HEAD
         path:'/overview/:id',
         element:<ChatbotPage></ChatbotPage>
+=======
+        path:'/admin',
+        element:<AdminDashboard></AdminDashboard>
+      },
+      {
+        path:'/article',
+        element:<ResearchPaperDisplay></ResearchPaperDisplay>
+>>>>>>> cfcc26f45e34d2a2d8c7a743959eecdbcf54c049
       }
 ]);
 const App = () => {
