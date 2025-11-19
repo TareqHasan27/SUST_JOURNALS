@@ -11,6 +11,8 @@ import VerifyOtpFromSignup from "./pages/VerifyOtpFromSignup";
 import AuthorRankingSystem from "./pages/ranking/AuthorCard";
 import BookmarkSection from "./pages/bookmarks/BookMarks";
 import PaperSubmissionForm from "./pages/submitpaper/SubmitPaper";
+import ChatbotButton from "./pages/chatbot/ChatbotButton";
+import ChatbotPage from "./pages/chatbot/ChatbotPage";
 const router = createBrowserRouter([
   {
     element: <AppLayout />, 
@@ -55,6 +57,10 @@ const router = createBrowserRouter([
       {
         path:'/submit-paper',
         element:<PaperSubmissionForm></PaperSubmissionForm>
+      },
+      {
+        path:'/overview/:id',
+        element:<ChatbotPage></ChatbotPage>
       }
 ]);
 const App = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bookmark, BookmarkX, Calendar, Eye, Download, FileText, Search, Trash2, ExternalLink } from 'lucide-react';
+import { Bookmark, BookmarkX, Calendar, Eye, Download, FileText, Search, Trash2, ExternalLink, Sparkle } from 'lucide-react';
 
 // Mock data - Replace with actual API call
 const mockBookmarkedPapers = [
@@ -150,6 +150,15 @@ const PaperCard = ({ paper, onRemoveBookmark, onViewPaper }) => {
 
           {/* Right side - Actions */}
           <div className="flex md:flex-col gap-2 flex-shrink-0">
+          <Button
+            onClick={() => navigate(`/ai-chat/${paper.paper_id}`)}
+            variant="outline"
+            size="sm"
+            className="border-purple-300 text-purple-600 hover:bg-purple-50"
+          >
+            <Sparkle className="w-4 h-4 mr-1" />
+            AI Overview
+          </Button>
             <Button
               onClick={() => onViewPaper(paper.paper_id)}
               className="bg-green-600 hover:bg-green-700 text-white flex-1 md:flex-none"
