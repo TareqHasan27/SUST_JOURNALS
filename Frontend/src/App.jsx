@@ -10,6 +10,8 @@ import ChangePassword from "./pages/ChangePassword";
 import VerifyOtpFromSignup from "./pages/VerifyOtpFromSignup";
 import AuthorRankingSystem from "./pages/ranking/AuthorCard";
 import BookmarkSection from "./pages/bookmarks/BookMarks";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import ResearchPaperDisplay from "./pages/Article/ResearchPaperDisplay";
 const router = createBrowserRouter([
   {
     element: <AppLayout />, 
@@ -50,6 +52,14 @@ const router = createBrowserRouter([
       {
         path:'/bookmarks',
         element:<BookmarkSection></BookmarkSection>
+      },
+      {
+        path:'/admin',
+        element:<AdminDashboard></AdminDashboard>
+      },
+      {
+        path:'/article',
+        element:<ResearchPaperDisplay></ResearchPaperDisplay>
       }
 ]);
 const App = () => {
