@@ -6,7 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recha
 import Bio from "./profileComponents/Bio";
 
 
-// ✅ Mock data (replace with backend later)
+// Mock data (replace with backend later)
 const mockProfile = {
   id: 1,
   name: "Dr. Anshita",
@@ -64,7 +64,7 @@ const UserProfile = () => {
   ];
 
   return (
-    <div className="min-h-screen  bg-blue-50 px-4 py-10">
+    <div className="min-h-screen  bg-green-50 px-4 py-10">
       <div className="flex  space-y-1 justify-center space-x-1 items-start sm:flex-row flex-col">
         <div className="mx-auto w-2/3 space-y-6 mt-1.5">
           <ProfileHeader profile={profile} />
@@ -74,11 +74,11 @@ const UserProfile = () => {
         <div className="w-1/3 ml-8 space-y-6">
            <h2 className="text-lg font-bold mb-15 text-gray-700">Citations per Year</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={citationsPerYear}>
+            <BarChart data={citationsPerYear} >
               <XAxis dataKey="year" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="citations" fill="#808080" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="citations" fill="#228B22" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
           <ProfileStats stats={profile.stats} />

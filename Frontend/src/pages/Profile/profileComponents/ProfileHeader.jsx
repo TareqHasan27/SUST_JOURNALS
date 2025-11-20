@@ -14,13 +14,13 @@ const ProfileHeader = ({ profile }) => {
 
           <div className="mt-2 space-y-1 text-gray-600 text-sm">
             <p className="flex items-center gap-2">
-              <Mail size={16} /> {profile.email}
+              <Mail size={16} className="text-green-600" /> {profile.email}
             </p>
             <p className="flex items-center gap-2">
-              <MapPin size={16} /> {profile.university}
+              <MapPin size={16} className="text-green-600" /> {profile.university}
             </p>
             <p className="flex items-center gap-2">
-              <BookOpen size={16} /> {profile.department}
+              <BookOpen size={16} className="text-green-600" /> {profile.department}
             </p>  
           </div>
 
@@ -28,7 +28,7 @@ const ProfileHeader = ({ profile }) => {
             {profile.researchAreas.map((area, i) => (
               <span
                 key={i}
-                className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full"
+                className="px-3 py-1 bg-green-50 text-green-700 text-sm text-bold rounded-full"
               >
                 {area}
               </span>
@@ -38,7 +38,7 @@ const ProfileHeader = ({ profile }) => {
       </div>
 
       <div className="flex gap-3">
-        <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-200 flex items-center gap-2 text-sm">
+        <button className="px-3 py-2 border border-green-300 rounded-lg hover:bg-green-500 hover:text-white flex items-center gap-2 text-sm">
           <Edit3 size={16} /> Edit
         </button>
       </div>
