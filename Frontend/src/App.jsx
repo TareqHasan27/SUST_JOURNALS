@@ -10,47 +10,79 @@ import ChangePassword from "./pages/ChangePassword";
 import VerifyOtpFromSignup from "./pages/VerifyOtpFromSignup";
 import AuthorRankingSystem from "./pages/ranking/AuthorCard";
 import BookmarkSection from "./pages/bookmarks/BookMarks";
+import PaperSubmissionForm from "./pages/submitpaper/SubmitPaper";
+import ChatbotButton from "./pages/chatbot/ChatbotButton";
+import ChatbotPage from "./pages/chatbot/ChatbotPage";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import ResearchPaperDisplay from "./pages/Article/ResearchPaperDisplay";
+import UserProfile from "./pages/Profile/UserProfile";
+import HomeSection from "./pages/Home/HomePage";
 const router = createBrowserRouter([
   {
-    element: <AppLayout />, 
+    element: <AppLayout />,
     children: [
       {
-       path: '/',
-       element:<Hero/>
-    }
-    ]
+        path: "/",
+        element: <Hero />,
+      },
+    ],
   },
-    {
-        path: '/signup',
-        element: <Signup/>
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
+  {
+    path: "/verify/change-password",
+    element: <VerifyOTP />,
+  },
+  {
+    path: "/verify/signup",
+    element: <VerifyOtpFromSignup />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/change-password/:email",
+    element: <ChangePassword />,
+  },
+  {
+    path: "/ranking",
+    element: <AuthorRankingSystem></AuthorRankingSystem>,
+  },
+  {
+    path: "/bookmarks",
+    element: <BookmarkSection></BookmarkSection>,
+  },
+  {
+    path: "/submit-paper",
+    element: <PaperSubmissionForm></PaperSubmissionForm>,
+  },
+  {
+    path: "/overview/:id",
+    element: <ChatbotPage></ChatbotPage>,
+  },
+  {
+    path: "/admin",
+    element: <AdminDashboard></AdminDashboard>,
+  },
+  {
+    path: "/article",
+    element: <ResearchPaperDisplay></ResearchPaperDisplay>,
       },
       {
-        path: '/verify/change-password',
-        element: <VerifyOTP/>
-      },
-      {
-        path: '/verify/signup',
-        element: <VerifyOtpFromSignup/>
-      },
-      {
-        path: '/login',
-        element: <Login />
-      },
-      {
-        path: '/forgot-password',
-        element: <ForgotPassword />
-      },
-      {
-        path: '/change-password/:email',
-        element: <ChangePassword />
-      },{
-        path:'/ranking',
-        element:<AuthorRankingSystem></AuthorRankingSystem>
-      },
-      {
-        path:'/bookmarks',
-        element:<BookmarkSection></BookmarkSection>
-      }
+        path:'/profile',
+        element:<UserProfile></UserProfile>
+  },
+  {
+    path: "/home",
+    element: <HomeSection></HomeSection>,
+  },
 ]);
 const App = () => {
   return (
