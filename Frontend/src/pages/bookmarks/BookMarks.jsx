@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Bookmark, BookmarkX, Calendar, Eye, Download, FileText, Search, Trash2, ExternalLink, Sparkle } from 'lucide-react';
 
-// Mock data - Replace with actual API call
 const mockBookmarkedPapers = [
   {
     paper_id: 1,

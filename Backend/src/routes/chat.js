@@ -1,4 +1,3 @@
-// server/routes/chatRouter.js
 import express from "express";
 import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -43,7 +42,6 @@ chatRouter.post("/:id", async (req, res) => {
       else paperAbstract = results[0].abstract;
 
       try {
-        // Fetch user profile from SQL (assumes table 'user_profiles' with column 'reg_no')
         let profile = null;
         if (req.reg_no) {
           const profileQuery =
@@ -56,16 +54,12 @@ chatRouter.post("/:id", async (req, res) => {
           });
           profile = profileRow ? { ...profileRow } : null;
         }
-
-        // Make safe/truncated paper text to protect token limits
         const safePaperText = truncate(paperText, 15000);
 
-        // Decide which prompt to use: overview (for short context) or conversational
         const convLength = Array.isArray(conversation)
           ? conversation.length
           : 0;
 
-        // --- Overview prompt (when not enough conversation context) ---
         const overviewPrompt = `
 ${SYSTEM_PROMPT}
 
@@ -107,8 +101,7 @@ ${safePaperText}
 
 Respond with the overview only (plain text). Do not output anything else.
 `;
-        // --- Conversational prompt (when there is enough conversation) ---
-        // The conversational prompt includes a short paper context + the chat history and asks the model to reply as assistant.
+
         const paperContext = `You have access to an academic paper titled \"${paperTitle}\". Abstract: ${truncate(paperAbstract, 1000)}
 
 Refer to the paper when answering user questions.`;
@@ -126,7 +119,6 @@ Refer to the paper when answering user questions.`;
         if (convLength <= 1 && paper_id) {
           promptToSend = overviewPrompt;
         } else {
-          // Build a conversational instruction that gives the model context about the paper and asks for a helpful reply.
           promptToSend = `You are an AI assistant helping the user based on their profile and the context.
 --- USER PROFILE ---
 ${profile ? JSON.stringify(profile) : "No profile provided."}
@@ -140,7 +132,6 @@ ${convoText}
 Instructions: Reply concisely and helpfully to the user's last message. Reference sections of the paper if relevant (methods, results). Keep the reply to 4-8 short sentences. Plain text only.
 `;
         }
-        console.log(promptToSend.slice(0, 500));
         // Call the model
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
         const result = await model.generateContent(promptToSend);
@@ -152,7 +143,7 @@ Instructions: Reply concisely and helpfully to the user's last message. Referenc
         console.log("AI Output:", text.slice(0, 300));
         return res.json({ text });
       } catch (err) {
-        console.error("❌ chat API Error:", err);
+        console.error(" chat API Error:", err);
         res.status(500).json({ error: "AI chat failed" });
       }
     }
