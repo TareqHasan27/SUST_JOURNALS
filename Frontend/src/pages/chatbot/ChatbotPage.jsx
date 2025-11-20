@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 const ChatbotPage = () => {
   const { id } = useParams();
 
-  const generateId = () => Date.now() + Math.random(); // unique id for messages
+  const generateId = () => Date.now() + Math.random(); 
 
   const [messages, setMessages] = useState([
     {
@@ -22,8 +22,8 @@ const ChatbotPage = () => {
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const hasRun = useRef(false);
 
-  // Scroll to bottom when messages change
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -33,6 +33,10 @@ const ChatbotPage = () => {
   }, [messages, isTyping]);
 
   useEffect(() => {
+    
+  if (hasRun.current) return;
+  hasRun.current = true;
+  
     const fetchInitialOverview = async () => {
       setIsTyping(true);
 
@@ -45,6 +49,8 @@ const ChatbotPage = () => {
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
         setMessages((prev) => [...prev, botMessage]);
+        console.log("first ",aiResponse);
+        console.log("messages ",messages );
       } catch (err) {
         console.error("Initial AI request failed:", err);
       } finally {
@@ -54,9 +60,7 @@ const ChatbotPage = () => {
     fetchInitialOverview();
   }, []); // runs once on mount
 
-  // -------------------------------
-  // API call to AI
-  // -------------------------------
+
   const callAI = async (chatMessages) => {
     const last20 = chatMessages.slice(-20);
     const formatted = last20.map((m) => ({
@@ -86,10 +90,6 @@ const ChatbotPage = () => {
       return "Sorry, something went wrong.";
     }
   };
-
-  // -------------------------------
-  // Send user message
-  // -------------------------------
   const handleSendMessage = async () => {
     if (inputMessage.trim() === "") return;
 
@@ -114,6 +114,7 @@ const ChatbotPage = () => {
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, botMessage]);
+      
     } finally {
       setIsTyping(false);
     }
@@ -185,7 +186,6 @@ const ChatbotPage = () => {
               </div>
             ))}
 
-            {/* Typing Indicator */}
             {isTyping && (
               <div className="flex justify-start">
                 <div className="flex items-start space-x-3 max-w-2xl">
