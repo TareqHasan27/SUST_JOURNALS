@@ -15,6 +15,7 @@ import ChatbotButton from "./pages/chatbot/ChatbotButton";
 import ChatbotPage from "./pages/chatbot/ChatbotPage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ResearchPaperDisplay from "./pages/Article/ResearchPaperDisplay";
+import UserProfile from "./pages/Profile/UserProfile";
 import HomeSection from "./pages/Home/HomePage";
 const router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
   {
     path: "/article",
     element: <ResearchPaperDisplay></ResearchPaperDisplay>,
+      },
+      {
+        path:'/profile',
+        element:<UserProfile></UserProfile>
   },
   {
     path: "/home",

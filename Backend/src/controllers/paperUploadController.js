@@ -1,18 +1,127 @@
 const db = require("../config/db");
 
-exports.uploadPaper = async(req, res) => {
-    try{
-        const {title, abstract, department_id, created_by, pdf_url, publication_date} = req.body;
-        if(!title || !abstract || !department_id || !created_by || !pdf_url || !publication_date){
-            return res.status(400).json({message: "All fields must be required.."});
-        }
-        const sql = `INSERT INTO papers (title, abstract, department_id, created_by, pdf_url, publication_date) VALUES (?, ?, ?, ?, ?, ?)`;
-        const [results] = await db.promise().query(sql, [title, abstract, department_id, created_by, pdf_url, publication_date]);
-        if(results.affectedRows === 0){
-            return res.status(400).json({message: "Paper not uploaded.."});
-        }
-        return res.status(200).json({message: "Paper uploaded successfully.", paperId: results.insertId});
-    }catch(error){
-        return res.status(400).json({message: "Error Occured ", error});
+exports.uploadPaper = async (req, res) => {
+  try {
+    const {
+      title,
+      abstract,
+      department_id,
+      created_by,
+      pdf_url,
+      pdf_text,
+      publication_date,
+      authors,
+      keywords,
+      references,
+    } = req.body;
+
+    if (
+      !title ||
+      !abstract ||
+      !department_id ||
+      !created_by ||
+      !pdf_url ||
+      !pdf_text ||
+      !publication_date
+    ) {
+      return res
+        .status(400)
+        .json({ message: "All paper fields are required." });
     }
+
+    if (!Array.isArray(authors) || authors.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "At least one author is required." });
+    }
+    if (keywords !== undefined && !Array.isArray(keywords)) {
+      return res.status(400).json({ message: "Keywords must be provided." });
+    }
+    if (references !== undefined && !Array.isArray(references)) {
+      return res.status(400).json({
+        message: "References must be provided as an array if included.",
+      });
+    }
+
+    const correspondingCount = authors.filter(
+      (a) => !!a.is_corresponding
+    ).length;
+
+    if (correspondingCount !== 1) {
+      return res
+        .status(400)
+        .json({ message: "Exactly one corresponding author must be set." });
+    }
+
+    const paperSql = `
+      INSERT INTO papers (title, abstract, department_id, created_by, pdf_url, publication_date, pdf_text)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+    const [paperResult] = await db
+      .promise()
+      .query(paperSql, [
+        title,
+        abstract,
+        department_id,
+        created_by,
+        pdf_url,
+        publication_date,
+        pdf_text,
+      ]);
+
+    const paperId = paperResult.insertId;
+    const authorSql = `
+      INSERT INTO paper_authors (paper_id, reg_no, author_order, is_corresponding)
+      VALUES (?, ?, ?, ?)
+    `;
+
+    for (const a of authors) {
+      await db
+        .promise()
+        .query(authorSql, [
+          paperId,
+          a.reg_no,
+          a.author_order,
+          a.is_corresponding ? 1 : 0,
+        ]);
+    }
+    if (Array.isArray(keywords) && keywords.length > 0) {
+      const keywordsql = `
+        INSERT INTO paper_keywords(paper_id, keyword) VALUES (?, ?)`;
+      for (const k of keywords) {
+        {
+          const keyword = String(k).trim();
+          if (!keyword) continue;
+          await db.promise().query(keywordsql, [paperId, keyword]);
+        }
+      }
+    }
+    if (Array.isArray(references) && references.length > 0) {
+      const refSql = `
+        INSERT INTO paper_references (paper_id, reference_paper_id, reference_author_name, reference_title)
+        VALUES (?, ?, ?, ?)
+      `;
+      for (const r of references) {
+        const refPaperId = r.reference_paper_id;
+        const refAuthor = r.reference_author_name
+          ? String(r.reference_author_name).trim()
+          : "";
+        const refTitle = r.reference_title
+          ? String(r.reference_title).trim()
+          : "";
+        if (!refPaperId && !refAuthor && !refTitle) continue;
+        await db
+          .promise()
+          .query(refSql, [paperId, refPaperId, refAuthor, refTitle]);
+      }
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Paper and authors uploaded successfully", paperId });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: "Error Occured", error: error.message });
+  }
 };
