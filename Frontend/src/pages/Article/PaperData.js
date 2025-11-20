@@ -1,38 +1,21 @@
-// Mock data for the research paper
 const mockPaperData = {
   title: "Machine Learning Approaches for Climate Change Prediction: A Comprehensive Review",
   authors: ["Dr. Sarah Johnson", "Prof. Michael Chen", "Dr. Emily Rodriguez"],
   affiliation: "Department of Environmental Science, University of Technology",
   publicationDate: "November 2024",
   doi: "10.1234/journal.2024.12345",
-  keywords: ["Machine Learning", "Climate Change", "Predictive Modeling", "Environmental Science", "Deep Learning", "Time Series Analysis"],
-  abstract: "Climate change represents one of the most pressing challenges of our time, requiring accurate prediction models to inform policy decisions and mitigation strategies. This comprehensive review examines the application of machine learning approaches in climate change prediction, analyzing their effectiveness, limitations, and future potential. We systematically review recent advances in neural networks, ensemble methods, and hybrid models, discussing their performance in various climate prediction tasks. Our analysis reveals that while machine learning models have shown promising results in short-term climate forecasting, significant challenges remain in long-term prediction accuracy and model interpretability. This review provides researchers and practitioners with a roadmap for leveraging machine learning techniques in climate science.",
-  sections: [
-    {
-      id: "introduction",
-      title: "1. Introduction",
-      content: "Climate change has emerged as a critical global challenge, with far-reaching implications for ecosystems, human societies, and economic systems worldwide. The ability to accurately predict climate patterns and trends is essential for developing effective mitigation and adaptation strategies. Traditional climate models, while valuable, often struggle with the complexity and non-linearity inherent in climate systems.\n\nMachine learning (ML) has recently gained significant attention in climate science due to its ability to identify complex patterns in large datasets and make predictions without explicit programming of underlying physical laws. The rapid growth in computational power, coupled with the availability of extensive climate datasets, has created unprecedented opportunities for applying ML techniques to climate prediction tasks.\n\nThis review aims to provide a comprehensive overview of machine learning approaches used in climate change prediction, examining their strengths, limitations, and potential for future development. We focus on recent advances in the field, analyzing both successful applications and ongoing challenges that researchers face in this domain."
-    },
-    {
-      id: "methodology",
-      title: "2. Methodology",
-      content: "Our review methodology involved a systematic search of peer-reviewed literature published between 2018 and 2024. We utilized multiple academic databases including Web of Science, Scopus, and Google Scholar, employing search terms such as 'machine learning,' 'climate prediction,' 'deep learning,' and 'climate change modeling.'\n\nInclusion criteria required studies to: (1) focus on machine learning applications in climate prediction, (2) present quantitative results, (3) be published in peer-reviewed journals or conferences, and (4) be written in English. We initially identified 487 papers, which were screened based on title and abstract relevance, resulting in 156 papers for full-text review. After detailed analysis, 89 papers met all inclusion criteria and form the basis of this review.\n\nWe categorized the selected studies based on the ML techniques employed, including supervised learning, unsupervised learning, deep learning, ensemble methods, and hybrid approaches. For each category, we analyzed the specific algorithms used, datasets employed, prediction targets, and reported performance metrics."
-    },
-    {
-      id: "results",
-      title: "3. Results and Discussion",
-      content: "Our analysis reveals several key trends in the application of machine learning to climate prediction. Deep learning approaches, particularly Long Short-Term Memory (LSTM) networks and Convolutional Neural Networks (CNNs), have shown superior performance in capturing temporal and spatial patterns in climate data. Studies report accuracy improvements of 15-30% compared to traditional statistical methods for short-term temperature and precipitation forecasting.\n\nEnsemble methods, combining multiple ML models or integrating ML with physical climate models, demonstrate enhanced robustness and reliability. Random Forests and Gradient Boosting algorithms are particularly effective for feature importance analysis, helping identify key climate drivers and their interactions.\n\nHowever, significant challenges persist. Model interpretability remains a concern, particularly with complex deep learning architectures, making it difficult for climate scientists to understand and trust predictions. Long-term prediction accuracy (beyond 5-10 years) shows substantial degradation, suggesting fundamental limitations in current ML approaches for capturing multi-decadal climate dynamics.\n\nData quality and availability pose additional challenges, with many regions lacking comprehensive historical climate records. Transfer learning and data augmentation techniques show promise in addressing these limitations, but require careful validation to ensure physical consistency."
-    },
-    {
-      id: "conclusion",
-      title: "4. Conclusion",
-      content: "Machine learning has demonstrated significant potential in enhancing climate change prediction capabilities, offering new tools for understanding and forecasting complex climate patterns. The field has progressed rapidly, with deep learning and ensemble methods showing particular promise for short-term forecasting applications.\n\nDespite these advances, important challenges remain. Improving long-term prediction accuracy, enhancing model interpretability, and ensuring physical consistency of ML predictions are critical areas requiring further research. The integration of domain knowledge from climate science with ML techniques, through physics-informed neural networks and hybrid modeling approaches, represents a promising direction for future work.\n\nWe recommend that future research focus on: (1) developing interpretable ML models that can provide insights into climate mechanisms, (2) creating robust validation frameworks for ML-based climate predictions, (3) improving data collection and sharing practices to support ML model development, and (4) fostering interdisciplinary collaboration between ML researchers and climate scientists.\n\nAs climate change continues to accelerate, the development of accurate, reliable prediction tools becomes increasingly urgent. Machine learning, when properly applied and validated, can play a vital role in this endeavor, supporting evidence-based decision-making and effective climate action."
-    },
-    {
-      id: "references",
-      title: "5. References",
-      content: "[1] Anderson, K., et al. (2023). 'Deep Learning for Climate Forecasting: A Review.' Nature Climate Change, 13(4), 234-248.\n\n[2] Brown, M., & Wilson, J. (2022). 'Ensemble Methods in Climate Prediction.' Journal of Climate Science, 45(2), 156-172.\n\n[3] Chen, L., et al. (2024). 'Physics-Informed Neural Networks for Climate Modeling.' Environmental Research Letters, 19(1), 014003.\n\n[4] Davis, R., & Thompson, S. (2023). 'Machine Learning Applications in Climate Science: Opportunities and Challenges.' Climatic Change, 167(3-4), 89-105.\n\n[5] Garcia, A., et al. (2022). 'LSTM Networks for Temperature Prediction: A Comparative Study.' Geophysical Research Letters, 49(12), e2022GL098765.\n\n[6] Kumar, P., & Singh, R. (2024). 'Transfer Learning for Regional Climate Prediction.' International Journal of Climatology, 44(2), 445-462.\n\n[7] Liu, Y., et al. (2023). 'Interpretable Machine Learning for Climate Attribution Studies.' Science Advances, 9(15), eadf2156.\n\n[8] Martinez, C., & Lee, H. (2022). 'Data-Driven Climate Modeling: A Machine Learning Perspective.' Reviews of Geophysics, 60(3), e2021RG000750."
-    }
+  pdfUrl: "https://arxiv.org/pdf/2301.07041.pdf", // Sample PDF URL - replace with your actual PDF
+  keywords: ["Machine Learning", "Climate Change", "Predictive Modeling", "Environmental Science", "Deep Learning"],
+  abstract: "Climate change represents one of the most pressing challenges of our time, requiring accurate prediction models to inform policy decisions and mitigation strategies. This comprehensive review examines the application of machine learning approaches in climate change prediction, analyzing their effectiveness, limitations, and future potential. We systematically review recent advances in neural networks, ensemble methods, and hybrid models, discussing their performance in various climate prediction tasks.",
+  references: [
+    "Anderson, K., et al. (2023). 'Deep Learning for Climate Forecasting: A Review.' Nature Climate Change, 13(4), 234-248.",
+    "Brown, M., & Wilson, J. (2022). 'Ensemble Methods in Climate Prediction.' Journal of Climate Science, 45(2), 156-172.",
+    "Chen, L., et al. (2024). 'Physics-Informed Neural Networks for Climate Modeling.' Environmental Research Letters, 19(1), 014003.",
+    "Davis, R., & Thompson, S. (2023). 'Machine Learning Applications in Climate Science.' Climatic Change, 167(3-4), 89-105.",
+    "Garcia, A., et al. (2022). 'LSTM Networks for Temperature Prediction: A Comparative Study.' Geophysical Research Letters, 49(12).",
+    "Kumar, P., & Singh, R. (2024). 'Transfer Learning for Regional Climate Prediction.' International Journal of Climatology, 44(2), 445-462.",
+    "Liu, Y., et al. (2023). 'Interpretable Machine Learning for Climate Attribution Studies.' Science Advances, 9(15).",
+    "Martinez, C., & Lee, H. (2022). 'Data-Driven Climate Modeling: A Machine Learning Perspective.' Reviews of Geophysics, 60(3)."
   ]
 };
 
