@@ -196,7 +196,19 @@ exports.resetPassword = async (req, res) => {
           [hashedPassword, user.reg_no]
         );
       res.status(200).json({ message: "Password updated successfully" });
-    }); 
+    });
+    db.query("SELECT * FROM users WHERE reset_token = ?", [token], async(error, results) => {
+        if(error){
+            return res.status(500).json({error});
+        }
+        if(results.length === 0){
+            return res.status(400).json({message : "Invalid token"});
+        }
+        const user = results[0];
+        const hashedPassword = await bcrypt.hash(confirmPassword, 10);
+        await db.promise().query("UPDATE users SET password_hash = ? , reset_token = NULL WHERE reg_no = ?", [hashedPassword, user.reg_no]);
+        res.status(200).json({message : "Password updated successfully"});
+    });
 };
 
 

@@ -59,25 +59,3 @@ exports.recommendedPapers = async (req, res) => {
     return res.status(500).json({ message: "Server Error", error });
   }
 }
-;
-
-exports.fetchAllBookMark = async (req, res) => {
-  try{
-    const {reg_no} = req.body;
-    if(!reg_no){
-      return res.status(400).json({message: "Please provide the reg_no", status: "failed"});
-    }
-    const sql = `SELECT 
-    b.paper_id, p.pdf_url
-    FROM bookmarks as b
-    JOIN papers as p
-    ON b.paper_id = p.paper_id
-    WHERE b.reg_no = ?`;
-    const [results] = await db.promise().query(sql, [reg_no]);
-    if(results.length === 0){
-      return res.status(200).json({message: "No bookmark found.", status: "Success", data: []});
-    }
-  }catch(error){
-    return res.status(200).json({message: "Database Fail ", error, status : "failed"});
-  }
-};
