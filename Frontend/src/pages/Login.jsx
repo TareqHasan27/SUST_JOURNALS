@@ -52,10 +52,10 @@ const Login = () => {
         setUser(res.data.user);
         localStorage.setItem("accessToken", res.data.token);
         console.log(
-          "toke from localstorage",
+          "token from localstorage",
           localStorage.getItem("accessToken")
         );
-        toast.success(res.data.message );
+        toast.success(res.data.message);
         res.data.user ? navigate("/") : navigate("/verify");
       }
     } catch (error) {

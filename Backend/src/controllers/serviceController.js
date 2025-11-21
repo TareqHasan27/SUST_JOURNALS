@@ -100,8 +100,8 @@ exports.recommendedPapers = async (req, res) => {
       `
     SELECT DISTINCT p.*
     FROM papers p
-    JOIN user_keywords uk ON uk.paper_id = p.id
-    JOIN user_research_interests ur ON ur.interest = uk.keyword
+    JOIN paper_keywords pk ON pk.paper_id = p.id
+    JOIN user_research_interests ur ON ur.interest = pk.keyword
     WHERE ur.reg_no = ?
     ORDER BY p.created_at DESC;
     `,

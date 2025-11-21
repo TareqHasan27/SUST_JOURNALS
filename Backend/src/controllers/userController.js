@@ -1,9 +1,9 @@
 const db = require("../config/db");
-exports.fetchUser = async (req, res, next) => {
+exports.fetchUser = async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Not authorized" });
   try {
-    if (!req.user || !req.user.id) {
-      return res.status(400).json({ message: "User not found using token." });
-    }
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
     const sql = `SELECT 
     u.reg_no,
     u.email,
@@ -17,7 +17,7 @@ exports.fetchUser = async (req, res, next) => {
     JOIN user_profiles up ON u.reg_no = up.reg_no
     LEFT JOIN departments d ON up.department_id = d.id
     WHERE u.reg_no = ?;`;
-    const [results] = await db.promise().query(sql, [req.user.id]);
+    const [results] = await db.promise().query(sql, [decoded.id]);
     if (results.length === 0) {
       return res.status(400).json({ message: "User not found." });
     }
@@ -25,10 +25,11 @@ exports.fetchUser = async (req, res, next) => {
       message: "user information fetched successfully.",
       user: results[0],
     });
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Database error", error: error.message });
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
+    }
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 

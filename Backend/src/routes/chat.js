@@ -1,8 +1,7 @@
-import express from "express";
-import dotenv from "dotenv";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import db from "../config/db.js";
-
+const express = require("express");
+const dotenv = require("dotenv");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const db = require("../config/db.js");
 dotenv.config();
 
 const chatRouter = express.Router();
@@ -150,4 +149,4 @@ Instructions: Reply concisely and helpfully to the user's last message. Referenc
   );
 });
 
-export default chatRouter;
+module.exports = chatRouter;

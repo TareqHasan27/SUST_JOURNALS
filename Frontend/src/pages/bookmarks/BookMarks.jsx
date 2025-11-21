@@ -1,13 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Bookmark, BookmarkX, Calendar, Eye, Download, FileText, Search, Trash2, ExternalLink, Sparkle } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Bookmark,
+  BookmarkX,
+  Calendar,
+  Eye,
+  Download,
+  FileText,
+  Search,
+  Trash2,
+  ExternalLink,
+  Sparkle,
+} from "lucide-react";
 
 const mockBookmarkedPapers = [
   {
     paper_id: 1,
     title: "Machine Learning Applications in Climate Change Prediction",
-    abstract: "This paper explores the use of advanced machine learning algorithms to predict climate patterns and environmental changes. We present a comprehensive analysis of various ML models and their effectiveness in forecasting long-term climate trends.",
+    abstract:
+      "This paper explores the use of advanced machine learning algorithms to predict climate patterns and environmental changes. We present a comprehensive analysis of various ML models and their effectiveness in forecasting long-term climate trends.",
     authors: "Dr. Sarah Ahmed, Prof. Mohammad Rahman",
     primary_department: "Computer Science",
     publication_date: "2024-10-15",
@@ -15,12 +27,13 @@ const mockBookmarkedPapers = [
     download_count: 432,
     citation_count: 28,
     bookmarked_at: "2024-11-10",
-    pdf_url: "/papers/ml-climate-prediction.pdf"
+    pdf_url: "/papers/ml-climate-prediction.pdf",
   },
   {
     paper_id: 2,
     title: "Quantum Computing: A New Paradigm for Cryptography",
-    abstract: "An in-depth study of quantum computing principles and their implications for modern cryptographic systems. This research examines post-quantum cryptography methods and their implementation strategies.",
+    abstract:
+      "An in-depth study of quantum computing principles and their implications for modern cryptographic systems. This research examines post-quantum cryptography methods and their implementation strategies.",
     authors: "Prof. Kamal Hossain, Dr. Fatima Khan",
     primary_department: "Physics",
     publication_date: "2024-09-22",
@@ -28,12 +41,13 @@ const mockBookmarkedPapers = [
     download_count: 301,
     citation_count: 15,
     bookmarked_at: "2024-11-05",
-    pdf_url: "/papers/quantum-crypto.pdf"
+    pdf_url: "/papers/quantum-crypto.pdf",
   },
   {
     paper_id: 3,
     title: "Sustainable Urban Development Through Green Infrastructure",
-    abstract: "This study investigates the role of green infrastructure in promoting sustainable urban development. We analyze case studies from multiple cities and propose a framework for implementing eco-friendly urban planning strategies.",
+    abstract:
+      "This study investigates the role of green infrastructure in promoting sustainable urban development. We analyze case studies from multiple cities and propose a framework for implementing eco-friendly urban planning strategies.",
     authors: "Nusrat Jahan, Ayesha Siddiqua",
     primary_department: "Environmental Science",
     publication_date: "2024-11-01",
@@ -41,12 +55,13 @@ const mockBookmarkedPapers = [
     download_count: 189,
     citation_count: 8,
     bookmarked_at: "2024-11-12",
-    pdf_url: "/papers/sustainable-urban.pdf"
+    pdf_url: "/papers/sustainable-urban.pdf",
   },
   {
     paper_id: 4,
     title: "Neural Network Optimization Techniques for Real-Time Applications",
-    abstract: "A comprehensive review of optimization techniques for neural networks in real-time systems. We present novel approaches to reduce computational complexity while maintaining accuracy.",
+    abstract:
+      "A comprehensive review of optimization techniques for neural networks in real-time systems. We present novel approaches to reduce computational complexity while maintaining accuracy.",
     authors: "Dr. Sarah Ahmed, Dr. Rahman",
     primary_department: "Computer Science",
     publication_date: "2024-08-30",
@@ -54,10 +69,9 @@ const mockBookmarkedPapers = [
     download_count: 789,
     citation_count: 42,
     bookmarked_at: "2024-10-28",
-    pdf_url: "/papers/neural-optimization.pdf"
-  }
+    pdf_url: "/papers/neural-optimization.pdf",
+  },
 ];
-
 
 // Search Component
 const SearchBar = ({ searchQuery, setSearchQuery }) => (
@@ -86,15 +100,19 @@ const PaperCard = ({ paper, onRemoveBookmark, onViewPaper }) => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   return (
-    <Card className={`hover:shadow-lg transition-all duration-300 border-green-200 ${isRemoving ? 'opacity-50' : ''}`}>
+    <Card
+      className={`hover:shadow-lg transition-all duration-300 border-green-200 ${
+        isRemoving ? "opacity-50" : ""
+      }`}
+    >
       <CardContent className="pt-6">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Left side - Paper icon */}
@@ -106,11 +124,13 @@ const PaperCard = ({ paper, onRemoveBookmark, onViewPaper }) => {
 
           {/* Middle - Paper details */}
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-gray-900 mb-2 hover:text-green-700 cursor-pointer line-clamp-2"
-                onClick={() => onViewPaper(paper.paper_id)}>
+            <h3
+              className="text-lg font-bold text-gray-900 mb-2 hover:text-green-700 cursor-pointer line-clamp-2"
+              onClick={() => onViewPaper(paper.paper_id)}
+            >
               {paper.title}
             </h3>
-            
+
             <p className="text-sm text-gray-600 mb-3 line-clamp-2">
               {paper.abstract}
             </p>
@@ -129,10 +149,6 @@ const PaperCard = ({ paper, onRemoveBookmark, onViewPaper }) => {
                 <span>Published: {formatDate(paper.publication_date)}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Eye className="w-3 h-3" />
-                <span>{paper.view_count} views</span>
-              </div>
-              <div className="flex items-center gap-1">
                 <Download className="w-3 h-3" />
                 <span>{paper.download_count} downloads</span>
               </div>
@@ -149,15 +165,15 @@ const PaperCard = ({ paper, onRemoveBookmark, onViewPaper }) => {
 
           {/* Right side - Actions */}
           <div className="flex md:flex-col gap-2 flex-shrink-0">
-          <Button
-            onClick={() => navigate(`/ai-chat/${paper.paper_id}`)}
-            variant="outline"
-            size="sm"
-            className="border-purple-300 text-purple-600 hover:bg-purple-50"
-          >
-            <Sparkle className="w-4 h-4 mr-1" />
-            AI Overview
-          </Button>
+            <Button
+              onClick={() => navigate(`/ai-chat/${paper.paper_id}`)}
+              variant="outline"
+              size="sm"
+              className="border-purple-300 text-purple-600 hover:bg-purple-50"
+            >
+              <Sparkle className="w-4 h-4 mr-1" />
+              AI Overview
+            </Button>
             <Button
               onClick={() => onViewPaper(paper.paper_id)}
               className="bg-green-600 hover:bg-green-700 text-white flex-1 md:flex-none"
@@ -188,10 +204,14 @@ const EmptyState = () => (
       <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <Bookmark className="w-12 h-12 text-green-600" />
       </div>
-      <h3 className="text-xl font-semibold text-gray-700 mb-2">No bookmarks yet</h3>
-      <p className="text-gray-600 mb-4">Start exploring papers and bookmark the ones you want to read later</p>
-      <Button 
-        onClick={() => window.location.href = '/papers'}
+      <h3 className="text-xl font-semibold text-gray-700 mb-2">
+        No bookmarks yet
+      </h3>
+      <p className="text-gray-600 mb-4">
+        Start exploring papers and bookmark the ones you want to read later
+      </p>
+      <Button
+        onClick={() => (window.location.href = "/papers")}
         className="bg-green-600 hover:bg-green-700 text-white"
       >
         Browse Papers
@@ -205,9 +225,12 @@ const NoResults = ({ searchQuery }) => (
   <Card className="border-green-200">
     <CardContent className="py-12 text-center">
       <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-      <h3 className="text-lg font-semibold text-gray-700 mb-2">No papers found</h3>
+      <h3 className="text-lg font-semibold text-gray-700 mb-2">
+        No papers found
+      </h3>
       <p className="text-gray-600">
-        No bookmarked papers match "<span className="font-semibold">{searchQuery}</span>"
+        No bookmarked papers match "
+        <span className="font-semibold">{searchQuery}</span>"
       </p>
     </CardContent>
   </Card>
@@ -217,65 +240,76 @@ const NoResults = ({ searchQuery }) => (
 const BookmarkSection = () => {
   const [bookmarks, setBookmarks] = useState([]);
   const [filteredBookmarks, setFilteredBookmarks] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
 
   // Fetch bookmarks on mount
   useEffect(() => {
+    const fetchBookmarks = async () => {
+      try {
+        const res = await axios.post(
+          "http://localhost:4000/api/service/allbookmarks",
+          {
+            reg_no: "2021831040",
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        setBookmarks(res.data);
+      } catch (error) {
+        console.error("Failed to fetch bookmarks:", error);
+      }
+    };
     fetchBookmarks();
+    setLoading(false);
   }, []);
 
   // Filter bookmarks when search query changes
   useEffect(() => {
-    if (searchQuery.trim() === '') {
+    if (searchQuery.trim() === "") {
       setFilteredBookmarks(bookmarks);
     } else {
       const query = searchQuery.toLowerCase();
-      const filtered = bookmarks.filter(paper =>
-        paper.title.toLowerCase().includes(query) ||
-        paper.authors.toLowerCase().includes(query) ||
-        paper.primary_department.toLowerCase().includes(query) ||
-        paper.abstract.toLowerCase().includes(query)
+      const filtered = bookmarks.filter(
+        (paper) =>
+          paper.title.toLowerCase().includes(query) ||
+          paper.authors.toLowerCase().includes(query) ||
+          paper.primary_department.toLowerCase().includes(query) ||
+          paper.abstract.toLowerCase().includes(query)
       );
       setFilteredBookmarks(filtered);
     }
   }, [searchQuery, bookmarks]);
 
-  const fetchBookmarks = async () => {
-    try {
-      // Replace with actual API call
-      // const response = await fetch('/api/bookmarks');
-      // const data = await response.json();
-      
-      // Simulating API call
-      setTimeout(() => {
-        setBookmarks(mockBookmarkedPapers);
-        setFilteredBookmarks(mockBookmarkedPapers);
-        setLoading(false);
-      }, 500);
-    } catch (error) {
-      console.error('Error fetching bookmarks:', error);
-      setLoading(false);
-    }
-  };
-
   const handleRemoveBookmark = async (paperId) => {
     try {
-      // Replace with actual API call
-      // await fetch(`/api/bookmarks/${paperId}`, { method: 'DELETE' });
-      
-      // Simulating API call
-      setTimeout(() => {
-        setBookmarks(prev => prev.filter(p => p.paper_id !== paperId));
-      }, 300);
+      const res = await axios.post(
+        "http://localhost:4000/api/service/removebookmark",
+        {
+          reg_no: "2021831040",
+          paper_id: paperId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Update UI
+      setBookmarks((prev) => prev.filter((p) => p.paper_id !== paperId));
     } catch (error) {
-      console.error('Error removing bookmark:', error);
+      console.error("Error removing bookmark:", error);
     }
   };
 
   const handleViewPaper = (paperId) => {
     // Navigate to paper detail page
-    console.log('Navigating to paper:', paperId);
+    console.log("Navigating to paper:", paperId);
     // In real app: window.location.href = `/papers/${paperId}` or use Next.js router
   };
 
@@ -297,16 +331,22 @@ const BookmarkSection = () => {
   return (
     <div className="min-h-screen bg-green-50 p-6">
       <div className="max-w-5xl mx-auto">
-
         {bookmarks.length > 0 && (
           <>
-            <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-            
+            <SearchBar
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+
             {/* Results count */}
             {searchQuery && (
               <div className="mb-4">
                 <p className="text-gray-700">
-                  Found <span className="font-bold text-green-700">{filteredBookmarks.length}</span> result{filteredBookmarks.length !== 1 ? 's' : ''}
+                  Found{" "}
+                  <span className="font-bold text-green-700">
+                    {filteredBookmarks.length}
+                  </span>{" "}
+                  result{filteredBookmarks.length !== 1 ? "s" : ""}
                 </p>
               </div>
             )}
