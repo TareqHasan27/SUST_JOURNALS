@@ -24,18 +24,71 @@ exports.removeBookMark = async (req, res) => {
   try {
     const { reg_no, paper_id } = req.body;
     if (!reg_no || !paper_id) {
-      return res.status(400).json({ message: "Registration number and paper id must be needed." });
+      return res
+        .status(400)
+        .json({ message: "Registration number and paper id must be needed." });
     }
     const sql = `DELETE FROM bookmarks WHERE reg_no = ? AND paper_id = ?`;
     const [results] = await db.promise().query(sql, [reg_no, paper_id]);
     if (results.affectedRows === 0) {
       return res.status(404).json({ message: "Bookmark not found." });
     }
-    return res.status(200).json({ message: "Bookmark Deleted successfully.." })
+    return res.status(200).json({ message: "Bookmark Deleted successfully.." });
   } catch (error) {
     return res.status(400).json({ message: "Database Error", error });
   }
-}
+};
+exports.fetchAllBookMark = async (req, res) => {
+  try {
+    const { reg_no } = req.body;
+    if (!reg_no) {
+      return res.status(400).json({
+        message: "Please provide the reg_no",
+        status: "failed",
+        data: [],
+      });
+    }
+
+    const sql = `
+      SELECT
+        p.id AS paper_id,
+        p.title,
+        p.abstract,
+        d.name AS department_name,
+        p.publication_date,
+        pm.download_count,
+        pm.citation_count,
+        b.created_at AS bookmark_at,
+        p.pdf_url,
+        GROUP_CONCAT(DISTINCT up.full_name SEPARATOR ', ') AS authors
+      FROM bookmarks b
+      JOIN papers p ON b.paper_id = p.id
+      LEFT JOIN departments d ON p.department_id = d.id
+      LEFT JOIN paper_metrics pm ON p.id = pm.paper_id
+      LEFT JOIN paper_authors pa ON p.id = pa.paper_id
+      LEFT JOIN user_profiles up ON pa.reg_no = up.reg_no
+      WHERE b.reg_no = ?
+      GROUP BY
+        p.id, p.title, p.abstract, d.name, 
+        p.publication_date, pm.download_count,
+        pm.citation_count, b.created_at, p.pdf_url
+      ORDER BY b.created_at DESC;
+    
+    `;
+    const [rows] = await db.promise().query(sql, [reg_no]);
+
+    return res.status(200).json({
+      message: rows && rows.length ? "Bookmarks fetched" : "No bookmarks found",
+      status: "success",
+      data: rows || [],
+    });
+  } catch (err) {
+    console.error("fetchAllBookMark error:", err);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", status: "failed", data: [] });
+  }
+};
 
 exports.recommendedPapers = async (req, res) => {
   try {
@@ -54,8 +107,12 @@ exports.recommendedPapers = async (req, res) => {
     `,
       [reg_no]
     );
-    return res.status(200).json({ data: rows, message: "Recommended papers fetched successfully.", status: true });
+    return res.status(200).json({
+      data: rows,
+      message: "Recommended papers fetched successfully.",
+      status: true,
+    });
   } catch (error) {
     return res.status(500).json({ message: "Server Error", error });
   }
-}
+};
