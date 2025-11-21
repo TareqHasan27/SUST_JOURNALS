@@ -77,7 +77,7 @@ const PaperCard = ({ paper, onViewPaper }) => {
       <CardContent className="pt-6">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Left side - Paper icon */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center">
               <FileText className="w-8 h-8 text-green-600" />
             </div>
@@ -142,7 +142,7 @@ const PaperCard = ({ paper, onViewPaper }) => {
           </div>
 
           {/* Right side - Actions */}
-          <div className="flex md:flex-col gap-2 flex-shrink-0">
+          <div className="flex md:flex-col gap-2 shrink-0">
             <Button
               onClick={handleAiOverview}
               variant="outline"
