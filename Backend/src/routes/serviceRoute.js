@@ -12,6 +12,7 @@ const {
 const { uploadPaper } = require("../controllers/paperUploadController");
 const { fetchUser, rank } = require("../controllers/userController");
 const { protect } = require("../middleware/authMiddleware");
+const { notifyUser } = require("../controllers/notificattionController");
 
 // Bookmark routes
 router.post("/addbookmark", addBookMark);
@@ -19,7 +20,7 @@ router.post("/removebookmark", removeBookMark);
 router.post("/allbookmarks", fetchAllBookMark);
 
 // Recommended papers (requires auth)
-router.get("/recommendedPapers", protect, recommendedPapers);
+router.get("/recommendedpapers", protect, recommendedPapers);
 
 // Upload paper
 router.post("/uploadPaper", uploadPaper);
@@ -27,6 +28,9 @@ router.post("/uploadPaper", uploadPaper);
 // User-related routes
 router.get("/fetchuser", protect, fetchUser);
 router.get("/rank", rank);
+
+//notify user
+router.post("/notifyuser", notifyUser);
 
 router.get("/paper/:paperId", async (req, res) => {
   const paperId = req.params.paperId;

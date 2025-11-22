@@ -17,7 +17,6 @@ const truncate = (s, n) =>
 chatRouter.post("/:id", async (req, res) => {
   console.log("chat API Request Received");
   const { conversation = [], length, reg_no, paper_id } = req.body;
-  req.reg_no = reg_no; // allow caller to pass reg_no in body
   console.log("Paper ID:", paper_id, "Conversation length:", length);
   console.log("Last user message:", conversation);
 
@@ -42,11 +41,11 @@ chatRouter.post("/:id", async (req, res) => {
 
       try {
         let profile = null;
-        if (req.reg_no) {
+        if (reg_no) {
           const profileQuery =
             "SELECT * FROM user_profiles WHERE reg_no = ? LIMIT 1";
           const profileRow = await new Promise((resolve, reject) => {
-            db.query(profileQuery, [req.reg_no], (pErr, pResults) => {
+            db.query(profileQuery, [reg_no], (pErr, pResults) => {
               if (pErr) return reject(pErr);
               resolve(pResults && pResults.length ? pResults[0] : null);
             });
@@ -134,7 +133,6 @@ Instructions: Reply concisely and helpfully to the user's last message. Referenc
         // Call the model
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
         const result = await model.generateContent(promptToSend);
-
         let text = result.response.text().trim();
         // Cleanup safety (removes code fences or triple backticks)
         text = text.replace(/```/g, "").trim();

@@ -103,8 +103,8 @@ const FilterSection = ({
   setShowFilters,
   departments,
 }) => (
-  <Card className="mb-6 border-green-200">
-    <CardContent className="pt-6">
+  <Card className="mb-2 border-green-200">
+    <CardContent className="pt-2">
       <div className="flex flex-col gap-4">
         {/* Search Bar */}
         <div className="flex gap-3">
@@ -338,15 +338,12 @@ const AuthorRankingSystem = () => {
 
   return (
     <div className="min-h-screen bg-green-50 p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-4">
           <h1 className="text-4xl font-bold text-green-800 mb-2">
             Author Rankings
           </h1>
-          <p className="text-gray-600">
-            Discover and explore top researchers and their contributions
-          </p>
         </div>
 
         <StatsCards authors={authors} />

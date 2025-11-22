@@ -23,7 +23,7 @@ const SearchBar = ({ searchData, setSearchData, onSearch, searching }) => {
   };
 
   return (
-    <div className="mb-6 bg-white p-6 rounded-lg shadow-sm border">
+    <div className="mb-4 bg-white p-4 rounded-lg shadow-sm border">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">
         Search Papers
       </h2>
@@ -65,14 +65,14 @@ const SearchBar = ({ searchData, setSearchData, onSearch, searching }) => {
         {/* Department Search */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Department
+            Keywords
           </label>
           <input
             type="text"
-            placeholder="Enter department..."
-            value={searchData.department}
+            placeholder="Enter keywords..."
+            value={searchData.keyword}
             onChange={(e) =>
-              setSearchData({ ...searchData, department: e.target.value })
+              setSearchData({ ...searchData, keyword: e.target.value })
             }
             onKeyPress={handleKeyPress}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -252,7 +252,7 @@ export default function HomeSection() {
   const [searchData, setSearchData] = useState({
     title: "",
     author: "",
-    department: "",
+    keyword: "",
   });
 
   // Initial load of recommended papers
@@ -300,11 +300,10 @@ export default function HomeSection() {
         searchPayload.author = searchData.author.trim();
       }
 
-      if (searchData.department.trim()) {
-        searchPayload.department = searchData.department.trim();
+      if (searchData.keyword.trim()) {
+        searchPayload.keyword = searchData.keyword.trim();
       }
 
-      // If no search criteria, don't search
       if (Object.keys(searchPayload).length === 0) {
         setSearching(false);
         return;
@@ -313,7 +312,7 @@ export default function HomeSection() {
       console.log("Search Payload:", searchPayload);
 
       const res = await axios.post(
-        "http://localhost:4000/api/service/searchpublishedpaper",
+        "http://localhost:4000/api/papers/published",
         searchPayload,
         {
           headers: {
@@ -322,7 +321,7 @@ export default function HomeSection() {
           },
         }
       );
-
+      console.log("res", res);
       setPapers(res.data.papers || []);
     } catch (error) {
       console.error("Error searching papers:", error);
@@ -373,16 +372,13 @@ export default function HomeSection() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl  mx-auto">
-        {/* Search Section */}
+      <div className="max-w-5xl mx-auto">
         <SearchBar
           searchData={searchData}
           setSearchData={setSearchData}
           onSearch={handleSearch}
           searching={searching}
         />
-
-        {/* Results count */}
         {hasSearched && (
           <div className="mb-4 text-sm text-gray-600">
             Found {papers.length} paper{papers.length !== 1 ? "s" : ""}

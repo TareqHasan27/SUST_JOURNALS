@@ -18,11 +18,16 @@ exports.fetchUser = async (req, res) => {
     up.university,
     d.name AS department_name,
     up.google_scholar_id,
-    up.orcid_id
+    up.orcid_id,
+    am.total_citations,
+    am.h_index,
+    am.i10_index
     FROM users u
     JOIN user_profiles up ON u.reg_no = up.reg_no
     LEFT JOIN departments d ON up.department_id = d.id
-    WHERE u.reg_no = ?;`;
+    LEFT JOIN author_metrics am ON u.reg_no = am.reg_no
+    WHERE u.reg_no = ?;
+    `;
     const [results] = await db.promise().query(sql, [decoded.id]);
     if (results.length === 0) {
       return res.status(400).json({ message: "User not found." });

@@ -2,18 +2,22 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { Send, Bot, User, Loader } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { getData } from "@/components/userContext";
 
 const ChatbotPage = () => {
-  const { id } = useParams();
+  const { id } = useParams() || "";
 
-  const generateId = () => Date.now() + Math.random(); 
-
+  const generateId = () => Date.now() + Math.random();
+  const { user, loading } = getData();
   const [messages, setMessages] = useState([
     {
       id: generateId(),
-      text: "Hello! I'm your AI assistant.",
+      text: "Hi bro!",
       sender: "bot",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     },
   ]);
 
@@ -33,24 +37,26 @@ const ChatbotPage = () => {
   }, [messages, isTyping]);
 
   useEffect(() => {
-    
-  if (hasRun.current) return;
-  hasRun.current = true;
-  
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     const fetchInitialOverview = async () => {
       setIsTyping(true);
 
       try {
-        const aiResponse = await callAI(messages); 
+        const aiResponse = await callAI(messages);
         const botMessage = {
           id: generateId(),
           text: aiResponse,
           sender: "bot",
-          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
         };
         setMessages((prev) => [...prev, botMessage]);
-        console.log("first ",aiResponse);
-        console.log("messages ",messages );
+        console.log("first ", aiResponse);
+        console.log("messages ", messages);
       } catch (err) {
         console.error("Initial AI request failed:", err);
       } finally {
@@ -59,7 +65,6 @@ const ChatbotPage = () => {
     };
     fetchInitialOverview();
   }, []); // runs once on mount
-
 
   const callAI = async (chatMessages) => {
     const last20 = chatMessages.slice(-20);
@@ -74,9 +79,9 @@ const ChatbotPage = () => {
         {
           conversation: formatted,
           length: chatMessages.length,
-          reg_no: "2021831001",
+          reg_no: user.reg_no,
           paper_id: id,
-        }, 
+        },
         {
           headers: {
             authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -97,7 +102,10 @@ const ChatbotPage = () => {
       id: generateId(),
       text: inputMessage,
       sender: "user",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     const updatedMessages = [...messages, userMessage];
@@ -111,10 +119,12 @@ const ChatbotPage = () => {
         id: generateId(),
         text: aiResponse,
         sender: "bot",
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
       setMessages((prev) => [...prev, botMessage]);
-      
     } finally {
       setIsTyping(false);
     }
@@ -127,40 +137,38 @@ const ChatbotPage = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin border-green-600" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-green-50 flex flex-col">
-      {/* Header */}
-      <div className="fixed left-0 right-0 bg-white shadow-md z-50">
-        <div className="max-w-5xl mx-auto px-6 py-4">
-          <div className="flex items-center space-x-3">
-            <div className="bg-green-100 p-2 rounded-full">
-              <Bot className="text-green-600" size={28} />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800">AI Career Assistant</h1>
-              <p className="text-sm text-gray-600">Ask me anything about your career</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Chat Messages */}
       <div className="flex-1 overflow-hidden mt-20">
         <div className="max-w-5xl mx-auto h-full flex flex-col">
           <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex ${
+                  message.sender === "user" ? "justify-end" : "justify-start"
+                }`}
               >
                 <div
                   className={`flex items-start space-x-3 max-w-2xl ${
-                    message.sender === "user" ? "flex-row-reverse space-x-reverse" : ""
+                    message.sender === "user"
+                      ? "flex-row-reverse space-x-reverse"
+                      : ""
                   }`}
                 >
                   <div
                     className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                      message.sender === "user" ? "bg-green-600" : "bg-white border-2 border-green-200"
+                      message.sender === "user"
+                        ? "bg-green-600"
+                        : "bg-white border-2 border-green-200"
                     }`}
                   >
                     {message.sender === "user" ? (
@@ -170,7 +178,11 @@ const ChatbotPage = () => {
                     )}
                   </div>
 
-                  <div className={`flex flex-col ${message.sender === "user" ? "items-end" : "items-start"}`}>
+                  <div
+                    className={`flex flex-col ${
+                      message.sender === "user" ? "items-end" : "items-start"
+                    }`}
+                  >
                     <div
                       className={`rounded-2xl px-5 py-3 shadow-sm ${
                         message.sender === "user"
@@ -178,9 +190,13 @@ const ChatbotPage = () => {
                           : "bg-white text-gray-800 rounded-tl-none"
                       }`}
                     >
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.text}</p>
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {message.text}
+                      </p>
                     </div>
-                    <span className="text-xs text-gray-500 mt-1 px-2">{message.timestamp}</span>
+                    <span className="text-xs text-gray-500 mt-1 px-2">
+                      {message.timestamp}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -195,8 +211,14 @@ const ChatbotPage = () => {
                   <div className="bg-white rounded-2xl rounded-tl-none px-5 py-3 shadow-sm">
                     <div className="flex space-x-2">
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.2s" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.4s" }}
+                      ></div>
                     </div>
                   </div>
                 </div>
@@ -233,10 +255,16 @@ const ChatbotPage = () => {
                   : "bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg transform hover:scale-105"
               }`}
             >
-              {isTyping ? <Loader className="text-white animate-spin" size={24} /> : <Send className="text-white" size={24} />}
+              {isTyping ? (
+                <Loader className="text-white animate-spin" size={24} />
+              ) : (
+                <Send className="text-white" size={24} />
+              )}
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-2 text-center">Press Enter to send, Shift + Enter for new line</p>
+          <p className="text-xs text-gray-500 mt-2 text-center">
+            Press Enter to send, Shift + Enter for new line
+          </p>
         </div>
       </div>
     </div>

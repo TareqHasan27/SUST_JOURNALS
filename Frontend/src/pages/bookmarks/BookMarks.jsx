@@ -16,6 +16,7 @@ import {
 import { getData } from "@/components/userContext";
 import axios from "axios";
 import { set } from "y";
+import { useNavigate } from "react-router-dom";
 
 const mockBookmarkedPapers = [
   {
@@ -95,6 +96,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => (
 // Paper Card Component
 const PaperCard = ({ paper, onRemoveBookmark, onViewPaper }) => {
   const [isRemoving, setIsRemoving] = useState(false);
+  const navigate = useNavigate();
 
   const handleRemove = async (e) => {
     e.stopPropagation();
@@ -169,7 +171,7 @@ const PaperCard = ({ paper, onRemoveBookmark, onViewPaper }) => {
           {/* Right side - Actions */}
           <div className="flex md:flex-col gap-2 flex-shrink-0">
             <Button
-              onClick={() => navigate(`/ai-chat/${paper.paper_id}`)}
+              onClick={() => navigate(`/overview/${paper.paper_id}`)}
               variant="outline"
               size="sm"
               className="border-purple-300 text-purple-600 hover:bg-purple-50"
@@ -337,7 +339,7 @@ const BookmarkSection = () => {
 
   const handleViewPaper = (paperId) => {
     // TODO: replace with your router/navigation (e.g. react-router's useNavigate)
-    window.location.href = `/papers/${paperId}`;
+    window.location.href = `/paper/${paperId}`;
   };
 
   if (userLoading || localLoading) {

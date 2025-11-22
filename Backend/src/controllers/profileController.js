@@ -79,10 +79,12 @@ exports.updateUserProfile = async (req, res) => {
       .status(200)
       .json({ message: "Profile updated successfully", status: "success" });
   } catch (error) {
-    return res.status(400).json({
-      message: "Error occured.",
-      error: error.message,
-      status: "failed",
-    });
+    return res
+      .status(400)
+      .json({
+        message: "Error occured.",
+        error: error.message,
+        status: "failed",
+      });
   }
 };
