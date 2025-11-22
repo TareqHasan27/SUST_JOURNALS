@@ -12,13 +12,15 @@ export const UserProvider = ({ children }) => {
       if (token) {
         try {
           const res = await axios.get(
-            `http://localhost:8000/api/profile/user`,
+            `http://localhost:4000/api/profile/user`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }
           );
+
+          console.log("res from getdata", res);
           if (res.data.user) {
             setUser(res.data.user);
           }

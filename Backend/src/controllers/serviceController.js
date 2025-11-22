@@ -157,6 +157,8 @@ exports.recommendedPapers = async (req, res) => {
       keywords: paper.keywords ? paper.keywords.split("||") : [],
     }));
 
+    console.log("paper from backend", rows);
+
     return res.status(200).json({
       status: true,
       message: "Recommended papers fetched successfully.",

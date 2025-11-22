@@ -15,19 +15,21 @@ exports.uploadPaper = async (req, res) => {
       references,
     } = req.body;
 
-    if (
-      !title ||
-      !abstract ||
-      !department_id ||
-      !created_by ||
-      !pdf_url ||
-      !pdf_text ||
-      !publication_date
-    ) {
-      return res
-        .status(400)
-        .json({ message: "All paper fields are required." });
-    }
+    console.log(req.body);
+
+    // if (
+    //   !title ||
+    //   !abstract ||
+    //   !department_id ||
+    //   !created_by ||
+    //   !pdf_url ||
+    //   !pdf_text ||
+    //   !publication_date
+    // ) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "All paper fields are required." });
+    // }
 
     if (!Array.isArray(authors) || authors.length === 0) {
       return res

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,109 +10,33 @@ import {
   Filter,
   X,
 } from "lucide-react";
-import { set } from "y";
-
-const mockAuthors = [
-  {
-    reg_no: "2021831040",
-    full_name: "Dr. Sarah Ahmed",
-    university: "SUST",
-    department: "Computer Science",
-    profile_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
-    total_publications: 45,
-    total_citations: 892,
-    h_index: 18,
-    i10_index: 25,
-    research_interests: "Machine Learning, AI, Data Science",
-  },
-  {
-    reg_no: "2020831025",
-    full_name: "Prof. Mohammad Rahman",
-    university: "SUST",
-    department: "Physics",
-    profile_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mohammad",
-    total_publications: 67,
-    total_citations: 1543,
-    h_index: 28,
-    i10_index: 45,
-    research_interests: "Quantum Physics, Condensed Matter",
-  },
-  {
-    reg_no: "2019831012",
-    full_name: "Dr. Fatima Khan",
-    university: "SUST",
-    department: "Chemistry",
-    profile_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fatima",
-    total_publications: 38,
-    total_citations: 756,
-    h_index: 16,
-    i10_index: 22,
-    research_interests: "Organic Chemistry, Drug Design",
-  },
-  {
-    reg_no: "2021831055",
-    full_name: "Ayesha Siddiqua",
-    university: "SUST",
-    department: "Mathematics",
-    profile_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ayesha",
-    total_publications: 28,
-    total_citations: 432,
-    h_index: 12,
-    i10_index: 15,
-    research_interests: "Applied Mathematics, Statistics",
-  },
-  {
-    reg_no: "2020831088",
-    full_name: "Dr. Kamal Hossain",
-    university: "SUST",
-    department: "Electrical Engineering",
-    profile_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kamal",
-    total_publications: 52,
-    total_citations: 1024,
-    h_index: 22,
-    i10_index: 34,
-    research_interests: "Power Systems, Renewable Energy",
-  },
-  {
-    reg_no: "2019831067",
-    full_name: "Nusrat Jahan",
-    university: "SUST",
-    department: "Biology",
-    profile_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Nusrat",
-    total_publications: 31,
-    total_citations: 589,
-    h_index: 14,
-    i10_index: 18,
-    research_interests: "Molecular Biology, Genetics",
-  },
-];
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // Stats Cards Component
 const StatsCards = ({ authors }) => {
-  const stats = useMemo(
-    () => ({
-      totalAuthors: authors.length,
-      totalPublications: authors.reduce(
-        (sum, a) => sum + a.total_publications,
-        0
-      ),
-      totalCitations: authors.reduce((sum, a) => sum + a.total_citations, 0),
-      avgHIndex: (
-        authors.reduce((sum, a) => sum + a.h_index, 0) / authors.length
-      ).toFixed(1),
-    }),
-    [authors]
+  const totalAuthors = authors.length;
+  const totalPublications = authors.reduce(
+    (sum, a) => sum + a.total_publications,
+    0
   );
+  const totalCitations = authors.reduce((sum, a) => sum + a.total_citations, 0);
+  const avgHIndex =
+    authors.length > 0
+      ? (
+          authors.reduce((sum, a) => sum + a.h_index, 0) / authors.length
+        ).toFixed(1)
+      : 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
       <Card className="border-green-200 hover:shadow-lg transition-shadow">
-        <CardContent className="pt-4">
+        <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 font-medium">Total Authors</p>
               <p className="text-3xl font-bold text-green-700">
-                {stats.totalAuthors}
+                {totalAuthors}
               </p>
             </div>
             <Users className="w-10 h-10 text-green-600 opacity-70" />
@@ -128,7 +52,7 @@ const StatsCards = ({ authors }) => {
                 Total Publications
               </p>
               <p className="text-3xl font-bold text-green-700">
-                {stats.totalPublications}
+                {totalPublications}
               </p>
             </div>
             <BookOpen className="w-10 h-10 text-green-600 opacity-70" />
@@ -144,7 +68,7 @@ const StatsCards = ({ authors }) => {
                 Total Citations
               </p>
               <p className="text-3xl font-bold text-green-700">
-                {stats.totalCitations}
+                {totalCitations}
               </p>
             </div>
             <TrendingUp className="w-10 h-10 text-green-600 opacity-70" />
@@ -157,9 +81,7 @@ const StatsCards = ({ authors }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600 font-medium">Avg H-Index</p>
-              <p className="text-3xl font-bold text-green-700">
-                {stats.avgHIndex}
-              </p>
+              <p className="text-3xl font-bold text-green-700">{avgHIndex}</p>
             </div>
             <Award className="w-10 h-10 text-green-600 opacity-70" />
           </div>
@@ -280,11 +202,14 @@ const AuthorCard = ({ author, rank, onViewProfile }) => {
     >
       {getRankBadge(rank)}
 
-      <CardContent className="pt-2">
-        <div className="flex items-start gap-3">
+      <CardContent className="pt-8">
+        <div className="flex items-start gap-4">
           {/* Profile Image */}
           <img
-            src={author.profile_url}
+            src={
+              author.profile_url ||
+              `https://api.dicebear.com/7.x/avataaars/svg?seed=${author.full_name}`
+            }
             alt={author.full_name}
             className="w-20 h-20 rounded-full border-4 border-green-100 group-hover:border-green-300 transition-colors"
           />
@@ -294,22 +219,18 @@ const AuthorCard = ({ author, rank, onViewProfile }) => {
             <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-700 transition-colors truncate">
               {author.full_name}
             </h3>
-            <p className="text-sm text-gray-600 mb-1">{author.department}</p>
+            <p className="text-sm text-gray-600 mb-1">
+              {author.department_name}
+            </p>
             <p className="text-xs text-gray-500 mb-2">Reg: {author.reg_no}</p>
             <p className="text-sm text-gray-700 line-clamp-2">
               {author.research_interests}
             </p>
           </div>
-          <Button
-            className="mt-4 bg-green-600 hover:bg-green-700 text-white"
-            onClick={() => onViewProfile(author.reg_no)}
-          >
-            View Profile
-          </Button>
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-4 gap-3 mt-4 pt-2 border-t border-green-100">
+        <div className="grid grid-cols-4 gap-3 mt-4 pt-4 border-t border-green-100">
           <div className="text-center">
             <p className="text-2xl font-bold text-green-700">
               {author.total_publications}
@@ -335,8 +256,6 @@ const AuthorCard = ({ author, rank, onViewProfile }) => {
             <p className="text-xs text-gray-600">i10-Index</p>
           </div>
         </div>
-
-        {/* View Profile Button */}
       </CardContent>
     </Card>
   );
@@ -349,23 +268,30 @@ const AuthorRankingSystem = () => {
   const [sortBy, setSortBy] = useState("h_index");
   const [showFilters, setShowFilters] = useState(false);
   const [authors, setAuthors] = useState([]);
-  const [departments, setDepartments] = useState([]);
-
+  const [departments, setDepartments] = useState(["All Departments"]);
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchAllAuthors = async () => {
       try {
         const res = await axios.get("http://localhost:4000/api/service/rank");
-        setAuthors(res.data);
-        setDepartments([...new Set(res.data.map((a) => a.department_name))]);
+        console.log("res from ", res);
+        setAuthors(res.data.data);
+
+        // Extract unique departments and add "All Departments" at the beginning
+        const uniqueDepts = [
+          ...new Set(res.data.data.map((a) => a.department_name)),
+        ];
+        setDepartments(["All Departments", ...uniqueDepts]);
       } catch (error) {
-        console.error("Failed to fetch bookmarks:", error);
+        console.error("Failed to fetch authors:", error);
       }
     };
     fetchAllAuthors();
   }, []);
 
-  const filteredAndSortedAuthors = useMemo(() => {
-    let filtered = authors;
+  // Filter and sort function - called on every render
+  const getFilteredAndSortedAuthors = () => {
+    let filtered = [...authors];
 
     // Filter by search query
     if (searchQuery) {
@@ -375,14 +301,14 @@ const AuthorRankingSystem = () => {
           author.full_name.toLowerCase().includes(query) ||
           author.reg_no.toLowerCase().includes(query) ||
           author.research_interests.toLowerCase().includes(query) ||
-          author.department.toLowerCase().includes(query)
+          author.department_name.toLowerCase().includes(query)
       );
     }
 
     // Filter by department
     if (selectedDept !== "All Departments") {
       filtered = filtered.filter(
-        (author) => author.department === selectedDept
+        (author) => author.department_name === selectedDept
       );
     }
 
@@ -402,14 +328,29 @@ const AuthorRankingSystem = () => {
     });
 
     return filtered;
-  }, [searchQuery, selectedDept, sortBy]);
+  };
 
-  const handleViewProfile = (reg_no) => {};
+  const filteredAndSortedAuthors = getFilteredAndSortedAuthors();
+
+  const handleViewProfile = (reg_no) => {
+    navigate(`/profile/${reg_no}`);
+  };
 
   return (
     <div className="min-h-screen bg-green-50 p-6">
       <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-4xl font-bold text-green-800 mb-2">
+            Author Rankings
+          </h1>
+          <p className="text-gray-600">
+            Discover and explore top researchers and their contributions
+          </p>
+        </div>
+
         <StatsCards authors={authors} />
+
         <FilterSection
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -421,7 +362,8 @@ const AuthorRankingSystem = () => {
           setShowFilters={setShowFilters}
           departments={departments}
         />
-        <div className="mb-4 w-full  mx-auto">
+
+        <div className="mb-4 w-full mx-auto">
           <p className="text-gray-700 font-medium">
             Showing{" "}
             <span className="text-green-700 font-bold">
@@ -433,7 +375,7 @@ const AuthorRankingSystem = () => {
 
         {/* Author Cards Grid */}
         {filteredAndSortedAuthors.length > 0 ? (
-          <div className="grid grid-cols-1 gap-4 w-full  mx-auto">
+          <div className="grid grid-cols-1 gap-6 w-full mx-auto">
             {filteredAndSortedAuthors.map((author, index) => (
               <AuthorCard
                 key={author.reg_no}

@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 
 exports.protect = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
-  console.log("Auth Token:", token);
   if (!token) return res.status(401).json({ message: "Not authorized" });
 
   try {

@@ -1,49 +1,85 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Upload, Plus } from "lucide-react";
 
 const EditProfileModal = ({ isOpen, onClose, profile, onSave }) => {
   const [formData, setFormData] = useState({
-    name: profile.name,
-    bio: profile.bio,
-    photo: profile.photo || "",
-    researchInterests: [...profile.researchInterests]
+    name: "",
+    bio: "",
+    researchInterests: [],
+    photo: "",
   });
+  const [file, setFile] = useState(null);
   const [newInterest, setNewInterest] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        name: profile.name || "",
+        bio: profile.bio || "",
+        researchInterests: profile.researchInterests || [],
+        photo: profile.photo || "",
+      });
+    }
+  }, [profile]);
 
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, photo: reader.result });
-      };
-      reader.readAsDataURL(file);
+  const handlePhotoUpload = async (e) => {
+    const selectedFile = e.target.files[0];
+    if (!selectedFile) return;
+
+    setFile(selectedFile);
+    setUploading(true);
+    setError("");
+
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", selectedFile);
+
+    try {
+      const res = await fetch("http://localhost:4000/api/pdf/upload-pdf", {
+        method: "POST",
+        body: formDataUpload,
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Upload failed");
+        setUploading(false);
+        return;
+      }
+      console.log("profile url", data);
+      setFormData((prev) => ({ ...prev, photo: data.url }));
+      setUploading(false);
+    } catch (err) {
+      console.error("Upload error:", err);
+      setError("Upload error. Try again.");
+      setUploading(false);
     }
   };
 
   const addResearchInterest = () => {
-    if (newInterest.trim() && !formData.researchInterests.includes(newInterest.trim())) {
-      setFormData({
-        ...formData,
-        researchInterests: [...formData.researchInterests, newInterest.trim()]
-      });
-      setNewInterest("");
-    }
+    const trimmed = newInterest.trim();
+    if (!trimmed || formData.researchInterests.includes(trimmed)) return;
+    setFormData((prev) => ({
+      ...prev,
+      researchInterests: [...prev.researchInterests, trimmed],
+    }));
+    setNewInterest("");
   };
 
   const removeResearchInterest = (index) => {
-    setFormData({
-      ...formData,
-      researchInterests: formData.researchInterests.filter((_, i) => i !== index)
-    });
+    setFormData((prev) => ({
+      ...prev,
+      researchInterests: prev.researchInterests.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = () => {
     onSave(formData);
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-green-50 bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -67,7 +103,11 @@ const EditProfileModal = ({ isOpen, onClose, profile, onSave }) => {
             <div className="flex items-center gap-4">
               <div className="w-24 h-24 bg-green-50 rounded-lg overflow-hidden flex items-center justify-center">
                 {formData.photo ? (
-                  <img src={formData.photo} alt="Preview" className="w-full h-full object-cover" />
+                  <img
+                    src={formData.photo}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <Upload size={32} className="text-green-600" />
                 )}
@@ -83,6 +123,10 @@ const EditProfileModal = ({ isOpen, onClose, profile, onSave }) => {
                 />
               </label>
             </div>
+            {uploading && (
+              <p className="text-sm text-gray-500 mt-1">Uploading...</p>
+            )}
+            {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
           </div>
 
           {/* Name */}
@@ -93,7 +137,9 @@ const EditProfileModal = ({ isOpen, onClose, profile, onSave }) => {
             <input
               type="text"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
             />
           </div>
@@ -105,7 +151,9 @@ const EditProfileModal = ({ isOpen, onClose, profile, onSave }) => {
             </label>
             <textarea
               value={formData.bio}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, bio: e.target.value })
+              }
               rows={4}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none resize-none"
             />
@@ -121,7 +169,10 @@ const EditProfileModal = ({ isOpen, onClose, profile, onSave }) => {
                 type="text"
                 value={newInterest}
                 onChange={(e) => setNewInterest(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addResearchInterest())}
+                onKeyPress={(e) =>
+                  e.key === "Enter" &&
+                  (e.preventDefault(), addResearchInterest())
+                }
                 placeholder="Add research interest"
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
               />

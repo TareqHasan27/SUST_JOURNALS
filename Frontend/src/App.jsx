@@ -72,12 +72,12 @@ const router = createBrowserRouter([
     element: <AdminDashboard></AdminDashboard>,
   },
   {
-    path: "/article",
+    path: "/paper/:paperId",
     element: <ResearchPaperDisplay></ResearchPaperDisplay>,
-      },
-      {
-        path:'/profile',
-        element:<UserProfile></UserProfile>
+  },
+  {
+    path: "/profile/:reg_no",
+    element: <UserProfile></UserProfile>,
   },
   {
     path: "/home",
