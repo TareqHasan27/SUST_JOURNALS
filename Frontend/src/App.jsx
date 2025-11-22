@@ -17,6 +17,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ResearchPaperDisplay from "./pages/Article/ResearchPaperDisplay";
 import UserProfile from "./pages/Profile/UserProfile";
 import HomeSection from "./pages/Home/HomePage";
+import Notification from "./pages/Notifications/Notification";
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
     path: "/home",
     element: <HomeSection></HomeSection>,
   },
+  {
+    path:"/notifications",
+    element: <Notification></Notification>
+  }
 ]);
 const App = () => {
   return (
