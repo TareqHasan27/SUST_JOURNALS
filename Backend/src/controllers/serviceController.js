@@ -92,14 +92,13 @@ exports.fetchAllBookMark = async (req, res) => {
 
 exports.recommendedPapers = async (req, res) => {
   try {
-
     if (!req.reg_no) {
       return res.status(400).json({
         status: false,
-        message: "User not found using token."
+        message: "User not found using token.",
       });
     }
-    
+
     const reg_no = req.reg_no;
 
     const [rows] = await db.promise().query(
@@ -144,7 +143,7 @@ exports.recommendedPapers = async (req, res) => {
     );
 
     // Format rows for clean JSON output
-    const formatted = rows.map(paper => ({
+    const formatted = rows.map((paper) => ({
       paper_id: paper.paper_id,
       title: paper.title,
       abstract: paper.abstract,
@@ -155,21 +154,20 @@ exports.recommendedPapers = async (req, res) => {
       download_count: paper.download_count || 0,
 
       authors: paper.authors ? paper.authors.split("||") : [],
-      keywords: paper.keywords ? paper.keywords.split("||") : []
+      keywords: paper.keywords ? paper.keywords.split("||") : [],
     }));
 
     return res.status(200).json({
       status: true,
       message: "Recommended papers fetched successfully.",
-      data: formatted
+      data: formatted,
     });
-
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       status: false,
       message: "Server error",
-      error
+      error,
     });
   }
 };
