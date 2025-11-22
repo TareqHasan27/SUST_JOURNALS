@@ -122,7 +122,8 @@ exports.recommendedPapers = async (req, res) => {
           GROUP_CONCAT(
               pk.keyword 
               SEPARATOR '||'
-          ) AS keywords
+          ) AS keywords,
+          IF(b.paper_id IS NULL, 0, 1) AS is_bookmark
 
       FROM papers p
       JOIN paper_keywords pk ON pk.paper_id = p.id
@@ -133,13 +134,14 @@ exports.recommendedPapers = async (req, res) => {
 
       LEFT JOIN departments d ON d.id = p.department_id
       LEFT JOIN paper_metrics pm ON pm.paper_id = p.id
+      LEFT JOIN bookmarks b ON b.paper_id = p.id AND b.reg_no = ?
 
       WHERE ur.reg_no = ?
 
       GROUP BY p.id
       ORDER BY p.created_at DESC;
       `,
-      [reg_no]
+      [reg_no, reg_no]
     );
 
     // Format rows for clean JSON output
@@ -155,6 +157,7 @@ exports.recommendedPapers = async (req, res) => {
 
       authors: paper.authors ? paper.authors.split("||") : [],
       keywords: paper.keywords ? paper.keywords.split("||") : [],
+      is_bookmarked: !!paper.is_bookmark
     }));
 
     return res.status(200).json({
