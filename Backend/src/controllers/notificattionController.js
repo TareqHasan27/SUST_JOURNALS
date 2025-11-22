@@ -8,18 +8,18 @@ exports.notifyUser = async (req, res) => {
         }
         const sql = `
         SELECT
-         psa.paper_id,
+         pr.paper_id,
          p.title,
-         psa.comment AS review_message,
-         psa.action,
-         psa.created_at    AS date,
+         pr.comment AS review_message,
+         pr.action,
+         pr.created_at AS date,
          COALESCE(up.full_name, a.reg_no) AS from_admin
-        FROM paper_submission_actions psa
-        LEFT JOIN papers p ON psa.paper_id = p.id
-        LEFT JOIN users a ON psa.submitted_to = a.reg_no AND a.role = 'admin'
+        FROM paper_reviews pr
+        LEFT JOIN papers p ON pr.paper_id = p.id
+        LEFT JOIN users a ON pr.submitted_to = a.reg_no AND a.role = 'admin'
         LEFT JOIN user_profiles up ON a.reg_no = up.reg_no
-        WHERE psa.reg_no = ?
-        ORDER BY psa.created_at DESC;
+        WHERE pr.reg_no = ?
+        ORDER BY pr.created_at DESC;
         `;
         const [rows] = await db.promise().query(sql, [reg_no]);
         return res.status(200).json({message: rows.length ? "Notifications fetched" : "No notifications found", status: "success", data: rows});

@@ -144,7 +144,6 @@ exports.recommendedPapers = async (req, res) => {
       [reg_no, reg_no]
     );
 
-    // Format rows for clean JSON output
     const formatted = rows.map((paper) => ({
       paper_id: paper.paper_id,
       title: paper.title,

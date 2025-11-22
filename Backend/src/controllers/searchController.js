@@ -22,8 +22,6 @@ exports.searchPublishedPaper = async (req, res) => {
       LEFT JOIN user_profiles up ON pa.reg_no = up.reg_no
       LEFT JOIN departments d ON p.department_id = d.id
     `;
-
-    // Search by exact paper_id
     if (paper_id) {
       const sql = baseSelect + ` WHERE p.id = ? AND p.status = 'published' GROUP BY p.id LIMIT 1`;
       const [results] = await db.promise().query(sql, [paper_id]);
@@ -35,10 +33,8 @@ exports.searchPublishedPaper = async (req, res) => {
       return res.status(200).json({ paper });
     }
 
-    // Build dynamic filters
-    const where = ["p.status = 'published'"];
+    const where = ["p.status = 'accepted'"];
     const params = [];
-
     if (author) {
       const like = `%${author}%`;
       where.push(`up.full_name LIKE ?`);
@@ -52,8 +48,6 @@ exports.searchPublishedPaper = async (req, res) => {
     }
 
     const whereSQL = where.length ? " WHERE " + where.join(" AND ") : "";
-
-    // Count total matching papers
     const countSQL = `
       SELECT COUNT(DISTINCT p.id) AS total
       FROM papers p
@@ -63,8 +57,6 @@ exports.searchPublishedPaper = async (req, res) => {
     `;
     const [countRows] = await db.promise().query(countSQL, params);
     const total = countRows && countRows[0] ? Number(countRows[0].total) : 0;
-
-    // Fetch main data
     const mainSQL = `${baseSelect} ${whereSQL} GROUP BY p.id ORDER BY p.publication_date DESC, p.created_at DESC`;
     const [rows] = await db.promise().query(mainSQL, params);
 
