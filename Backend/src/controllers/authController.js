@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const sendEmail = require("../config/sendEmail.js");
-exports.createUser = (req, res) => {
+exports.createUser = async(req, res) => {
   const { reg_no, email, password, role } = req.body;
   if (!reg_no || !email || !password || !role) {
       console.log("Missing fields");
@@ -53,7 +53,7 @@ exports.createUser = (req, res) => {
   );
 };
 
-exports.login = (req, res) => {
+exports.login = async(req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res

@@ -72,9 +72,28 @@ exports.uploadPaper = async (req, res) => {
       ]);
 
     const paperId = paperResult.insertId;
+    try {
+      const metricsSQL = `
+      INSERT INTO paper_metrics (paper_id, citation_count)
+      VALUES (?, ?)`;
+      await db.promise().query(metricsSQL, [paperId, 0]);
+    } catch (error) {
+      return res
+        .status(400)
+        .json({
+          message: "failed to initialized paper_metrics",
+          error: error.message,
+          status: "failed",
+        });
+    }
     const authorSql = `
       INSERT INTO paper_authors (paper_id, reg_no, author_order, is_corresponding)
       VALUES (?, ?, ?, ?)
+    `;
+    const authorMetricsSQL = `
+      INSERT INTO author_metrics (reg_no, total_publications, total_citations)
+      VALUES (?, 1, 0)
+      ON DUPLICATE KEY UPDATE total_publications = total_publications + 1
     `;
 
     for (const a of authors) {
@@ -86,6 +105,7 @@ exports.uploadPaper = async (req, res) => {
           a.author_order,
           a.is_corresponding ? 1 : 0,
         ]);
+      await db.promise().query(authorMetricsSQL, [a.reg_no]);
     }
     if (Array.isArray(keywords) && keywords.length > 0) {
       const keywordsql = `
@@ -103,6 +123,11 @@ exports.uploadPaper = async (req, res) => {
         INSERT INTO paper_references (paper_id, reference_paper_id, reference_author_name, reference_title)
         VALUES (?, ?, ?, ?)
       `;
+      const updateCitationsSQL = `
+      UPDATE paper_metrics 
+      SET citation_count = citation_count + 1
+      WHERE paper_id = ?
+      `;
       for (const r of references) {
         const refPaperId = r.reference_paper_id;
         const refAuthor = r.reference_author_name
@@ -115,6 +140,9 @@ exports.uploadPaper = async (req, res) => {
         await db
           .promise()
           .query(refSql, [paperId, refPaperId, refAuthor, refTitle]);
+        if (refPaperId) {
+          await db.promise().query(updateCitationsSQL, [refPaperId]);
+        }
       }
     }
 
