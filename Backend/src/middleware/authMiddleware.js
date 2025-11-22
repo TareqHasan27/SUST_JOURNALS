@@ -1,26 +1,27 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-exports.protect = async(req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Not authorized' });
+exports.protect = async (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  console.log("Auth Token:", token);
+  if (!token) return res.status(401).json({ message: "Not authorized" });
 
-    try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        if (err.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Token expired' });
-        }
-        return res.status(401).json({ message: 'Invalid token' });
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    req.reg_no = decoded.id;
+    next();
+  } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
     }
+    return res.status(401).json({ message: "Invalid token" });
+  }
 };
 
 exports.restrictTo = (...roles) => {
-    return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
-            return res.status(403).json({ message: 'Forbidden: Access denied' });
-        }
-        next();
-    };
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({ message: "Forbidden: Access denied" });
+    }
+    next();
+  };
 };

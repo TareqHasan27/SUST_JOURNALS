@@ -18,7 +18,7 @@ router.post("/removebookmark", removeBookMark);
 router.post("/allbookmarks", fetchAllBookMark);
 
 // Recommended papers (requires auth)
-router.get("/recommendedPapers", protect, recommendedPapers);
+router.get("/recommendedpapers", protect, recommendedPapers);
 
 // Upload paper
 router.post("/uploadPaper", uploadPaper);

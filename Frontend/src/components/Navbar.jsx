@@ -1,6 +1,6 @@
 import {
     BookA, Target, LogOut, User, Home, Briefcase, GraduationCap,
-    FolderOpen, Menu, X, ShieldHalf ,Send ,BookmarkCheck, 
+    FolderOpen, Menu, X, ShieldHalf ,Send ,BookmarkCheck, Bell, 
     Award
     
 } from 'lucide-react'
@@ -36,7 +36,7 @@ const Navbar = () => {
         navigate('/user/profile')
     } 
     const roadmapHandler = () => {
-        navigate('/roadmap-popup')
+        navigate('/notifications')
     }  
 
     return (
@@ -72,7 +72,7 @@ const Navbar = () => {
                                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem  onClick={profilehandler} className="flex items-center gap-2"><User className='w-4 h-4 text-green-600' /> Profile</DropdownMenuItem>
-                                <DropdownMenuItem onClick={roadmapHandler} className="flex items-center gap-2"><Target className='w-4 h-4 text-green-600' /> RoadMap</DropdownMenuItem>
+                                <DropdownMenuItem onClick={roadmapHandler} className="flex items-center gap-2"><Bell className='w-4 h-4 text-green-600' /> Notification</DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={logoutHandler} className="flex items-center gap-2 text-red-600">
                                     <LogOut className='w-4 h-4' /> Logout

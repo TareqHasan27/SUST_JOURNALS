@@ -1,7 +1,15 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { FileText, Upload, X, CheckCircle, AlertCircle, Plus, Trash2 } from 'lucide-react';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  FileText,
+  Upload,
+  X,
+  CheckCircle,
+  AlertCircle,
+  Plus,
+  Trash2,
+} from "lucide-react";
 
 // Mock departments - Replace with API call
 const departments = [
@@ -10,73 +18,89 @@ const departments = [
   { id: 3, name: "Chemistry", short_code: "CHE" },
   { id: 4, name: "Mathematics", short_code: "MAT" },
   { id: 5, name: "Electrical & Electronic Engineering", short_code: "EEE" },
-  { id: 6, name: "Biology", short_code: "BIO" }
+  { id: 6, name: "Biology", short_code: "BIO" },
 ];
 
 // Mock tags
 const availableTags = [
-  "Machine Learning", "AI", "Quantum Physics", "Organic Chemistry",
-  "Applied Mathematics", "Power Systems", "Molecular Biology", "Data Science",
-  "Climate Change", "Renewable Energy", "Cryptography", "Statistics"
+  "Machine Learning",
+  "AI",
+  "Quantum Physics",
+  "Organic Chemistry",
+  "Applied Mathematics",
+  "Power Systems",
+  "Molecular Biology",
+  "Data Science",
+  "Climate Change",
+  "Renewable Energy",
+  "Cryptography",
+  "Statistics",
 ];
 
 // Simple PDF Upload Component
-const PDFUpload = ({ file, setFile, pdfUrl, setPdfUrl, uploading, setUploading }) => {
-  const [error, setError] = useState('');
+const PDFUpload = ({
+  file,
+  setFile,
+  pdfUrl,
+  setPdfUrl,
+  uploading,
+  setUploading,
+}) => {
+  const [error, setError] = useState("");
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    if (selectedFile && selectedFile.type === 'application/pdf') {
+    if (selectedFile && selectedFile.type === "application/pdf") {
       setFile(selectedFile);
-      setPdfUrl('');
-      setError('');
+      setPdfUrl("");
+      setError("");
     } else {
-      setError('Please select a PDF file');
+      setError("Please select a PDF file");
     }
   };
 
   const handleUpload = async () => {
     if (!file) {
-      setError('Please choose a file first');
+      setError("Please choose a file first");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
       setUploading(true);
-      setError('');
+      setError("");
 
-      const res = await fetch('http://localhost:4000/api/pdf/upload-pdf', {
-        method: 'POST',
+      const res = await fetch("http://localhost:4000/api/pdf/upload-pdf", {
+        method: "POST",
         body: formData,
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Upload failed');
+        setError(data.error || "Upload failed");
         setUploading(false);
         return;
       }
 
       setPdfUrl(data.url);
       setUploading(false);
-      console.log('PDF uploaded successfully:', data.url);
+      console.log("PDF uploaded successfully:", data.url);
     } catch (err) {
-      setError('Upload error. Try again.');
+      setError("Upload error. Try again.");
       setUploading(false);
-      console.error('Upload error:', err);
+      console.error("Upload error:", err);
     }
   };
 
   const formatFileSize = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB'];
+    const sizes = ["Bytes", "KB", "MB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
   return (
@@ -103,7 +127,9 @@ const PDFUpload = ({ file, setFile, pdfUrl, setPdfUrl, uploading, setUploading }
               <FileText className="w-8 h-8 text-blue-600" />
               <div>
                 <p className="font-medium text-gray-900">{file.name}</p>
-                <p className="text-sm text-gray-600">{formatFileSize(file.size)}</p>
+                <p className="text-sm text-gray-600">
+                  {formatFileSize(file.size)}
+                </p>
               </div>
             </div>
             <button
@@ -148,7 +174,9 @@ const PDFUpload = ({ file, setFile, pdfUrl, setPdfUrl, uploading, setUploading }
         <div className="mt-3 p-4 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex items-start gap-2 mb-2">
             <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-            <p className="text-green-700 font-medium">PDF uploaded successfully!</p>
+            <p className="text-green-700 font-medium">
+              PDF uploaded successfully!
+            </p>
           </div>
           <a
             href={pdfUrl}
@@ -167,7 +195,10 @@ const PDFUpload = ({ file, setFile, pdfUrl, setPdfUrl, uploading, setUploading }
 // Authors Component
 const AuthorsSection = ({ authors, setAuthors }) => {
   const addAuthor = () => {
-    setAuthors([...authors, { reg_no: '', author_name: '', is_corresponding: false }]);
+    setAuthors([
+      ...authors,
+      { reg_no: "", author_order: "", is_corresponding: false },
+    ]);
   };
 
   const removeAuthor = (index) => {
@@ -192,21 +223,25 @@ const AuthorsSection = ({ authors, setAuthors }) => {
               type="text"
               placeholder="Reg No (optional)"
               value={author.reg_no}
-              onChange={(e) => updateAuthor(index, 'reg_no', e.target.value)}
+              onChange={(e) => updateAuthor(index, "reg_no", e.target.value)}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <input
               type="text"
               placeholder="Author Name *"
-              value={author.author_name}
-              onChange={(e) => updateAuthor(index, 'author_name', e.target.value)}
+              value={author.author_order}
+              onChange={(e) =>
+                updateAuthor(index, "author_order", e.target.value)
+              }
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <label className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-300">
               <input
                 type="checkbox"
                 checked={author.is_corresponding}
-                onChange={(e) => updateAuthor(index, 'is_corresponding', e.target.checked)}
+                onChange={(e) =>
+                  updateAuthor(index, "is_corresponding", e.target.checked)
+                }
                 className="w-4 h-4 text-green-600 rounded focus:ring-2 focus:ring-green-500"
               />
               <span className="text-sm text-gray-700">Corresponding</span>
@@ -232,13 +267,82 @@ const AuthorsSection = ({ authors, setAuthors }) => {
   );
 };
 
+const Reference = ({ reference, setReference }) => {
+  const addReference = () => {
+    setReference([...reference, { paper_id: "", author_name: "", title: "" }]);
+  };
+
+  const removeReference = (index) => {
+    setReference(reference.filter((_, i) => i !== index));
+  };
+
+  const updateReference = (index, field, value) => {
+    const updated = [...reference];
+    updated[index][field] = value;
+    setReference(updated);
+  };
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        References (Optional)
+      </label>
+      <div className="space-y-3">
+        {reference.map((reference, index) => (
+          <div key={index} className="flex gap-2 items-start">
+            <input
+              type="text"
+              placeholder="Paper ID"
+              value={reference.paper_id}
+              onChange={(e) =>
+                updateReference(index, "paper_id", e.target.value)
+              }
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+            <input
+              type="text"
+              placeholder="Author Name *"
+              value={reference.author_name}
+              onChange={(e) =>
+                updateReference(index, "author_name", e.target.value)
+              }
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+            <input
+              type="text"
+              placeholder="Title *"
+              value={reference.title}
+              onChange={(e) => updateReference(index, "title", e.target.value)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+            <button
+              onClick={() => removeReference(index)}
+              className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          </div>
+        ))}
+      </div>
+      <Button
+        onClick={addReference}
+        variant="outline"
+        className="mt-3 border-green-600 text-green-600 hover:bg-green-50"
+      >
+        <Plus className="w-4 h-4 mr-2" />
+        Add Rererence
+      </Button>
+    </div>
+  );
+};
+
 // Tags Component
 const TagsSection = ({ selectedTags, setSelectedTags }) => {
-  const [customTag, setCustomTag] = useState('');
+  const [customTag, setCustomTag] = useState("");
 
   const toggleTag = (tag) => {
     if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter(t => t !== tag));
+      setSelectedTags(selectedTags.filter((t) => t !== tag));
     } else {
       setSelectedTags([...selectedTags, tag]);
     }
@@ -247,7 +351,7 @@ const TagsSection = ({ selectedTags, setSelectedTags }) => {
   const addCustomTag = () => {
     if (customTag.trim() && !selectedTags.includes(customTag.trim())) {
       setSelectedTags([...selectedTags, customTag.trim()]);
-      setCustomTag('');
+      setCustomTag("");
     }
   };
 
@@ -256,7 +360,7 @@ const TagsSection = ({ selectedTags, setSelectedTags }) => {
       <label className="block text-sm font-medium text-gray-700 mb-2">
         Tags / Keywords
       </label>
-      
+
       {selectedTags.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-3">
           {selectedTags.map((tag) => (
@@ -277,15 +381,17 @@ const TagsSection = ({ selectedTags, setSelectedTags }) => {
       )}
 
       <div className="flex flex-wrap gap-2 mb-3">
-        {availableTags.filter(tag => !selectedTags.includes(tag)).map((tag) => (
-          <button
-            key={tag}
-            onClick={() => toggleTag(tag)}
-            className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-green-100 hover:text-green-700 transition-colors"
-          >
-            + {tag}
-          </button>
-        ))}
+        {availableTags
+          .filter((tag) => !selectedTags.includes(tag))
+          .map((tag) => (
+            <button
+              key={tag}
+              onClick={() => toggleTag(tag)}
+              className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-green-100 hover:text-green-700 transition-colors"
+            >
+              + {tag}
+            </button>
+          ))}
       </div>
 
       <div className="flex gap-2">
@@ -294,7 +400,9 @@ const TagsSection = ({ selectedTags, setSelectedTags }) => {
           placeholder="Add custom tag..."
           value={customTag}
           onChange={(e) => setCustomTag(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomTag())}
+          onKeyPress={(e) =>
+            e.key === "Enter" && (e.preventDefault(), addCustomTag())
+          }
           className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
         />
         <Button
@@ -320,22 +428,21 @@ const SuccessModal = ({ show, onClose, paperId }) => {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Paper Submitted Successfully!</h3>
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+            Paper Submitted Successfully!
+          </h3>
           <p className="text-gray-600 mb-6">
-            Your research paper has been submitted for review. You will be notified once it's published.
+            Your research paper has been submitted for review. You will be
+            notified once it's published.
           </p>
           <div className="flex gap-3">
             <Button
-              onClick={() => window.location.href = `/papers/${paperId}`}
+              onClick={() => (window.location.href = `/papers/${paperId}`)}
               className="flex-1 bg-green-600 hover:bg-green-700 text-white"
             >
               View Paper
             </Button>
-            <Button
-              onClick={onClose}
-              variant="outline"
-              className="flex-1"
-            >
+            <Button onClick={onClose} variant="outline" className="flex-1">
               Submit Another
             </Button>
           </div>
@@ -348,45 +455,51 @@ const SuccessModal = ({ show, onClose, paperId }) => {
 // Main Component
 const PaperSubmissionForm = () => {
   const [formData, setFormData] = useState({
-    title: '',
-    abstract: '',
-    primary_department_id: '',
-    publication_date: new Date().toISOString().split('T')[0]
+    title: "",
+    abstract: "",
+    department_id: "",
+    pdf_text: "",
+    publication_date: new Date().toISOString().split("T")[0],
   });
-  
+
   const [pdfFile, setPdfFile] = useState(null);
-  const [pdfUrl, setPdfUrl] = useState('');
+  const [pdfUrl, setPdfUrl] = useState("");
   const [authors, setAuthors] = useState([]);
+  const [reference, setReference] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [submittedPaperId, setSubmittedPaperId] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async () => {
-    setError('');
+    setError("");
 
     // Validation
     if (!formData.title.trim()) {
-      setError('Please enter a paper title');
+      setError("Please enter a paper title");
       return;
     }
     if (!formData.abstract.trim()) {
-      setError('Please enter an abstract');
+      setError("Please enter an abstract");
       return;
     }
-    if (!formData.primary_department_id) {
-      setError('Please select a department');
+    if (!formData.department_id) {
+      setError("Please select a department");
       return;
     }
     if (!pdfUrl) {
-      setError('Please upload and confirm the PDF file first');
+      setError("Please upload and confirm the PDF file first");
+      return;
+    }
+    if (!formData.pdf_text.trim()) {
+      setError("Please enter the PDF text");
       return;
     }
 
@@ -396,28 +509,32 @@ const PaperSubmissionForm = () => {
       const paperData = {
         ...formData,
         pdf_url: pdfUrl,
-        authors: authors.filter(a => a.author_name.trim()),
-        tags: selectedTags
+        authors: authors,
+        reference: reference,
+        tags: selectedTags,
       };
 
-      const response = await fetch('http://localhost:4000/api/papers/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(paperData)
+      console.log("paper data", paperData);
+      console.log("Submitting paper data:", authors);
+      console.log("ref", reference);
+
+      const response = await fetch("http://localhost:4000/api/papers/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(paperData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Submission failed');
+        throw new Error(errorData.error || "Submission failed");
       }
 
       const result = await response.json();
       setSubmittedPaperId(result.paperId);
       setShowSuccess(true);
-      
     } catch (error) {
-      console.error('Error submitting paper:', error);
-      setError('Failed to submit paper: ' + error.message);
+      console.error("Error submitting paper:", error);
+      setError("Failed to submit paper: " + error.message);
     } finally {
       setSubmitting(false);
     }
@@ -425,17 +542,17 @@ const PaperSubmissionForm = () => {
 
   const resetForm = () => {
     setFormData({
-      title: '',
-      abstract: '',
-      primary_department_id: '',
-      publication_date: new Date().toISOString().split('T')[0]
+      title: "",
+      abstract: "",
+      primary_department_id: "",
+      publication_date: new Date().toISOString().split("T")[0],
     });
     setPdfFile(null);
-    setPdfUrl('');
+    setPdfUrl("");
     setAuthors([]);
     setSelectedTags([]);
     setShowSuccess(false);
-    setError('');
+    setError("");
   };
 
   return (
@@ -498,16 +615,33 @@ const PaperSubmissionForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
+                PDF Text <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                name="pdf_text"
+                value={formData.pdf_text}
+                onChange={handleInputChange}
+                placeholder="Provide a brief summary of your research (200-500 words)"
+                rows={6}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                {formData.pdf_text.length} characters
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Primary Department <span className="text-red-500">*</span>
               </label>
               <select
-                name="primary_department_id"
-                value={formData.primary_department_id}
+                name="department_id"
+                value={formData.department_id}
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
                 <option value="">Select a department</option>
-                {departments.map(dept => (
+                {departments.map((dept) => (
                   <option key={dept.id} value={dept.id}>
                     {dept.name} ({dept.short_code})
                   </option>
@@ -538,8 +672,11 @@ const PaperSubmissionForm = () => {
             />
 
             <AuthorsSection authors={authors} setAuthors={setAuthors} />
-
-            <TagsSection selectedTags={selectedTags} setSelectedTags={setSelectedTags} />
+            <Reference reference={reference} setReference={setReference} />
+            <TagsSection
+              selectedTags={selectedTags}
+              setSelectedTags={setSelectedTags}
+            />
 
             <div className="flex gap-3 pt-4">
               <Button
