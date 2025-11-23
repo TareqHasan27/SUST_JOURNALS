@@ -19,6 +19,7 @@ import UserProfile from "./pages/Profile/UserProfile";
 import HomeSection from "./pages/Home/HomePage";
 import Notification from "./pages/Notifications/Notification";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminNavbar from "./components/AdminNavbar";
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -125,9 +126,10 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: (
-      <ProtectedRoute>
+      <>
+        <AdminNavbar />
         <AdminDashboard></AdminDashboard>
-      </ProtectedRoute>
+      </>
     ),
   },
 ]);

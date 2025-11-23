@@ -156,11 +156,8 @@ exports.recommendedPapers = async (req, res) => {
 
       authors: paper.authors ? paper.authors.split("||") : [],
       keywords: paper.keywords ? paper.keywords.split("||") : [],
-      is_bookmarked: !!paper.is_bookmark
+      isBookmarked: !!paper.is_bookmark,
     }));
-
-    console.log("paper from backend", rows);
-
     return res.status(200).json({
       status: true,
       message: "Recommended papers fetched successfully.",
@@ -175,3 +172,5 @@ exports.recommendedPapers = async (req, res) => {
     });
   }
 };
+
+exports.fetchPaper = async () => {};

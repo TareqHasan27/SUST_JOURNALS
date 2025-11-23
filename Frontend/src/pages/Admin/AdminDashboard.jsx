@@ -83,7 +83,6 @@ const AdminDashboard = () => {
   return (
     <div className="admin-dashboard-container flex gap-6 p-6 bg-green-50 pt-12 mt-5">
       <Sidebar setCurrentView={setCurrentView} className="flex-1" />
-
       <div className="dashboard-content flex-1">
         {currentView === "overview" && (
           <Overview

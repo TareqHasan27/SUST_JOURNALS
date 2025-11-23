@@ -17,9 +17,9 @@ exports.notifyUser = async (req, res) => {
          pr.action,
          pr.created_at AS date,
          COALESCE(up.full_name, a.reg_no) AS from_admin
-        FROM paper_reviews psa
-        LEFT JOIN papers p ON psa.paper_id = p.id
-        LEFT JOIN users a ON psa.submitted_to = a.reg_no AND a.role = 'admin'
+        FROM paper_reviews pr
+        LEFT JOIN papers p ON pr.paper_id = p.id
+        LEFT JOIN users a ON pr.submitted_to = a.reg_no AND a.role = 'admin'
         LEFT JOIN user_profiles up ON a.reg_no = up.reg_no
         WHERE pr.reg_no = ?
         ORDER BY pr.created_at DESC;
