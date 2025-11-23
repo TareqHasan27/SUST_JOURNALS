@@ -22,13 +22,15 @@ exports.searchPublishedPaper = async (req, res) => {
       LEFT JOIN user_profiles up ON pa.reg_no = up.reg_no
       LEFT JOIN departments d ON p.department_id = d.id
     `;
-
-    // Search by exact paper_id
     if (paper_id) {
-      const sql = baseSelect + ` WHERE p.id = ? AND p.status = 'published' GROUP BY p.id LIMIT 1`;
+      const sql =
+        baseSelect +
+        ` WHERE p.id = ? AND p.status = 'published' GROUP BY p.id LIMIT 1`;
       const [results] = await db.promise().query(sql, [paper_id]);
       if (results.length === 0) {
-        return res.status(404).json({ message: "Paper not found", status: "failed" });
+        return res
+          .status(404)
+          .json({ message: "Paper not found", status: "failed" });
       }
       const paper = results[0];
       paper.authors = paper.authors ? paper.authors.split("||") : [];
@@ -36,9 +38,8 @@ exports.searchPublishedPaper = async (req, res) => {
     }
 
     // Build dynamic filters
-    const where = ["p.status = 'published'"];
+    const where = ["p.status = 'accepted'"];
     const params = [];
-
     if (author) {
       const like = `%${author}%`;
       where.push(`up.full_name LIKE ?`);
@@ -52,8 +53,6 @@ exports.searchPublishedPaper = async (req, res) => {
     }
 
     const whereSQL = where.length ? " WHERE " + where.join(" AND ") : "";
-
-    // Count total matching papers
     const countSQL = `
       SELECT COUNT(DISTINCT p.id) AS total
       FROM papers p
@@ -63,12 +62,10 @@ exports.searchPublishedPaper = async (req, res) => {
     `;
     const [countRows] = await db.promise().query(countSQL, params);
     const total = countRows && countRows[0] ? Number(countRows[0].total) : 0;
-
-    // Fetch main data
     const mainSQL = `${baseSelect} ${whereSQL} GROUP BY p.id ORDER BY p.publication_date DESC, p.created_at DESC`;
     const [rows] = await db.promise().query(mainSQL, params);
 
-    const papers = rows.map(r => ({
+    const papers = rows.map((r) => ({
       id: r.id,
       title: r.title,
       abstract: r.abstract,
@@ -79,17 +76,16 @@ exports.searchPublishedPaper = async (req, res) => {
       publication_date: r.publication_date,
       created_at: r.created_at,
       updated_at: r.updated_at,
-      authors: r.authors ? r.authors.split("||") : []
+      authors: r.authors ? r.authors.split("||") : [],
     }));
 
     return res.status(200).json({ total, results: papers.length, papers });
-
   } catch (error) {
     console.error(error);
     return res.status(400).json({
       message: "Error occurred",
       error: error.message,
-      status: "failed"
+      status: "failed",
     });
   }
 };

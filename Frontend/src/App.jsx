@@ -18,6 +18,8 @@ import ResearchPaperDisplay from "./pages/Article/ResearchPaperDisplay";
 import UserProfile from "./pages/Profile/UserProfile";
 import HomeSection from "./pages/Home/HomePage";
 import Notification from "./pages/Notifications/Notification";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminNavbar from "./components/AdminNavbar";
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
@@ -25,6 +27,75 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Hero />,
+      },
+      {
+        path: "/ranking",
+        element: (
+          <ProtectedRoute>
+            <AuthorRankingSystem></AuthorRankingSystem>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/bookmarks",
+        element: (
+          <ProtectedRoute>
+            <BookmarkSection></BookmarkSection>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/submit-paper",
+        element: (
+          <ProtectedRoute>
+            <PaperSubmissionForm></PaperSubmissionForm>
+            <ChatbotButton></ChatbotButton>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/overview/:id",
+        element: (
+          <ProtectedRoute>
+            <ChatbotPage></ChatbotPage>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/chat-bot",
+        element: (
+          <ProtectedRoute>
+            <ChatbotPage></ChatbotPage>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/paper/:paperId",
+        element: (
+          <ProtectedRoute>
+            <ResearchPaperDisplay></ResearchPaperDisplay>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/profile/:reg_no",
+        element: (
+          <ProtectedRoute>
+            <UserProfile></UserProfile>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/publications",
+        element: (
+          <ProtectedRoute>
+            <HomeSection></HomeSection>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/notifications",
+        element: <Notification></Notification>,
       },
     ],
   },
@@ -53,41 +124,14 @@ const router = createBrowserRouter([
     element: <ChangePassword />,
   },
   {
-    path: "/ranking",
-    element: <AuthorRankingSystem></AuthorRankingSystem>,
-  },
-  {
-    path: "/bookmarks",
-    element: <BookmarkSection></BookmarkSection>,
-  },
-  {
-    path: "/submit-paper",
-    element: <PaperSubmissionForm></PaperSubmissionForm>,
-  },
-  {
-    path: "/overview/:id",
-    element: <ChatbotPage></ChatbotPage>,
-  },
-  {
     path: "/admin",
-    element: <AdminDashboard></AdminDashboard>,
+    element: (
+      <>
+        <AdminNavbar />
+        <AdminDashboard></AdminDashboard>
+      </>
+    ),
   },
-  {
-    path: "/article",
-    element: <ResearchPaperDisplay></ResearchPaperDisplay>,
-      },
-      {
-        path:'/profile',
-        element:<UserProfile></UserProfile>
-  },
-  {
-    path: "/home",
-    element: <HomeSection></HomeSection>,
-  },
-  {
-    path:"/notifications",
-    element: <Notification></Notification>
-  }
 ]);
 const App = () => {
   return (

@@ -51,12 +51,10 @@ const Login = () => {
       if (res.data) {
         setUser(res.data.user);
         localStorage.setItem("accessToken", res.data.token);
-        console.log(
-          "token from localstorage",
-          localStorage.getItem("accessToken")
-        );
+        if (!res.data.user) navigate("/verify");
+        else if (res.data.user.role != "student") navigate("/admin");
+        else navigate("/");
         toast.success(res.data.message);
-        res.data.user ? navigate("/") : navigate("/verify");
       }
     } catch (error) {
       console.log(error);

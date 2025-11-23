@@ -29,7 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { toast } from "sonner";
 import { getData } from "./userContext";
 
-const Navbar = () => {
+const AdminNavbar = () => {
   const { user, setUser, loading } = getData();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -46,12 +46,6 @@ const Navbar = () => {
     localStorage.clear();
     navigate("/");
   };
-  const profilehandler = () => {
-    navigate(`/profile/${user.reg_no}`);
-  };
-  const roadmapHandler = () => {
-    navigate("/notifications");
-  };
 
   return (
     <nav className="p-3 border-b border-gray-200 bg-transparent relative z-50">
@@ -66,41 +60,6 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex gap-7 items-center text-lg font-semibold text-green-800">
-          <li>
-            <Link
-              to="/ranking"
-              className="hover:text-green-600 flex items-center gap-1"
-            >
-              <Award className="w-4 h-4" /> Ranking
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/publications"
-              className="hover:text-green-600 flex items-center gap-1"
-            >
-              <Briefcase className="w-4 h-4" /> Publications
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/submit-paper"
-              className="hover:text-green-600 flex items-center gap-1"
-            >
-              <Send className="w-4 h-4" />
-              Submit Papaer
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/bookmarks"
-              className="hover:text-green-600 flex items-center gap-1"
-            >
-              <Send className="w-4 h-4" />
-              Store
-            </Link>
-          </li>
-
           {/* User Dropdown */}
           {user ? (
             <DropdownMenu>
@@ -113,20 +72,6 @@ const Navbar = () => {
 
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={profilehandler}
-                  className="flex items-center gap-2"
-                >
-                  <User className="w-4 h-4 text-green-600" /> Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={roadmapHandler}
-                  className="flex items-center gap-2"
-                >
-                  <Bell className="w-4 h-4 text-green-600" /> Notification
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={logoutHandler}
                   className="flex items-center gap-2 text-red-600"
@@ -162,56 +107,9 @@ const Navbar = () => {
         }`}
       >
         <ul className="flex flex-col gap-4 p-5 text-green-800 font-medium">
-          <li>
-            <Link
-              to="/ranking"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2"
-            >
-              <Award className="w-4 h-4" /> Ranking
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/publications"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2"
-            >
-              <Briefcase className="w-4 h-4" /> Publications
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/submit-paper"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2"
-            >
-              <Send className="w-4 h-4" />
-              Submit Papaer
-            </Link>
-          </li>
-          <li>
-            <Link to="/bookmarks" onClick={() => setMenuOpen(false)}>
-              <Send className="w-4 h-4" />
-              Store
-            </Link>
-          </li>
-
           {user ? (
             <>
-              <hr className="border-gray-300" />
-              <li onClick={profilehandler} className="flex items-center gap-2">
-                <User className="w-4 h-4 text-green-600" /> Profile
-              </li>
-              <li className="flex items-center gap-2">
-                <BookA className="w-4 h-4 text-green-600" /> Notes
-              </li>
-              <li
-                onClick={logoutHandler}
-                className="flex items-center gap-2 text-red-600 cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" /> Logout
-              </li>
+              <LogOut className="w-4 h-4" /> Logout
             </>
           ) : (
             <li>
@@ -226,4 +124,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default AdminNavbar;

@@ -1,4 +1,4 @@
-import { Clock, FileText} from "lucide-react";
+import { Clock, FileText } from "lucide-react";
 
 const NotificationCard = ({ notification, onClick }) => {
   const formatDate = (dateString) => {
@@ -12,50 +12,41 @@ const NotificationCard = ({ notification, onClick }) => {
     if (diffMins < 60) return `${diffMins} minutes ago`;
     if (diffHours < 24) return `${diffHours} hours ago`;
     if (diffDays < 7) return `${diffDays} days ago`;
-    
+
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
-      day: "numeric"
+      day: "numeric",
     });
   };
 
   return (
     <div
-      className={`border rounded-lg p-5 transition-all duration-300 hover:shadow-lg cursor-pointer ${
-        notification.isRead 
-          ? "bg-white border-gray-200" 
-          : "bg-green-50 border-green-200 border-l-4 border-l-green-500"
-      }`}
-      onClick={() => onClick(notification)}
+      className="border rounded-lg p-5 transition-all duration-300 hover:shadow-lg cursor-pointer bg-white border-gray-200"
+      onClick={() => onClick(notification.paperId)}
     >
       <div className="flex gap-4">
         {/* Icon */}
         <div className="shrink-0">
-          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-            notification.isRead ? "bg-gray-100" : "bg-green-100"
-          }`}>
-            <FileText className={`w-6 h-6 ${
-              notification.isRead ? "text-gray-600" : "text-green-600"
-            }`} />
+          <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-green-100">
+            <FileText className="w-6 h-6 text-green-600" />
           </div>
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <h3 className={`font-bold mb-1 line-clamp-1 ${
-            notification.isRead ? "text-gray-900" : "text-green-800"
-          }`}>
+          <h3 className="font-bold mb-1 line-clamp-1 text-green-800">
             {notification.paperTitle}
           </h3>
-          
+
           <p className="text-sm text-gray-700 mb-3 line-clamp-2">
             {notification.message}
           </p>
 
           <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
             <span className="flex items-center gap-1">
-              <span className="font-medium text-green-600">From:</span> {notification.adminName}
+              <span className="font-medium text-green-600">From:</span>{" "}
+              {notification.adminName}
             </span>
             <span className="text-gray-300">•</span>
             <span className="flex items-center gap-1">
@@ -64,15 +55,9 @@ const NotificationCard = ({ notification, onClick }) => {
             </span>
           </div>
         </div>
-
-        {/* Unread indicator dot */}
-        {!notification.isRead && (
-          <div className="shrink-0 pt-1">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-          </div>
-        )}
       </div>
     </div>
   );
 };
+
 export default NotificationCard;

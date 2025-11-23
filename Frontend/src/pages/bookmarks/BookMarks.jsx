@@ -13,6 +13,10 @@ import {
   ExternalLink,
   Sparkle,
 } from "lucide-react";
+import { getData } from "@/components/userContext";
+import axios from "axios";
+import { set } from "y";
+import { useNavigate } from "react-router-dom";
 
 const mockBookmarkedPapers = [
   {
@@ -92,6 +96,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => (
 // Paper Card Component
 const PaperCard = ({ paper, onRemoveBookmark, onViewPaper }) => {
   const [isRemoving, setIsRemoving] = useState(false);
+  const navigate = useNavigate();
 
   const handleRemove = async (e) => {
     e.stopPropagation();
@@ -166,7 +171,7 @@ const PaperCard = ({ paper, onRemoveBookmark, onViewPaper }) => {
           {/* Right side - Actions */}
           <div className="flex md:flex-col gap-2 flex-shrink-0">
             <Button
-              onClick={() => navigate(`/ai-chat/${paper.paper_id}`)}
+              onClick={() => navigate(`/overview/${paper.paper_id}`)}
               variant="outline"
               size="sm"
               className="border-purple-300 text-purple-600 hover:bg-purple-50"
@@ -236,84 +241,108 @@ const NoResults = ({ searchQuery }) => (
   </Card>
 );
 
-// Main Component
 const BookmarkSection = () => {
   const [bookmarks, setBookmarks] = useState([]);
   const [filteredBookmarks, setFilteredBookmarks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [localLoading, setLocalLoading] = useState(true);
+  const [removingIds, setRemovingIds] = useState(new Set());
+  const { user, loading: userLoading } = getData();
 
-  // Fetch bookmarks on mount
   useEffect(() => {
     const fetchBookmarks = async () => {
+      if (!user) {
+        setBookmarks([]);
+        setFilteredBookmarks([]);
+        setLocalLoading(false);
+        return;
+      }
+
+      setLocalLoading(true);
       try {
+        const token = localStorage.getItem("accessToken");
         const res = await axios.post(
           "http://localhost:4000/api/service/allbookmarks",
-          {
-            reg_no: "2021831040",
-          },
+          { reg_no: user.reg_no },
           {
             headers: {
+              Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
           }
         );
 
-        setBookmarks(res.data);
-      } catch (error) {
-        console.error("Failed to fetch bookmarks:", error);
+        const data = Array.isArray(res.data) ? res.data : res.data?.data || [];
+        setBookmarks(data);
+        setFilteredBookmarks(data);
+      } catch (err) {
+        console.error("Failed to load bookmarks:", err);
+        setBookmarks([]);
+        setFilteredBookmarks([]);
+      } finally {
+        setLocalLoading(false);
       }
     };
-    fetchBookmarks();
-    setLoading(false);
-  }, []);
 
-  // Filter bookmarks when search query changes
+    // only fetch after user provider finished loading
+    if (!userLoading) fetchBookmarks();
+  }, [user, userLoading]);
+
   useEffect(() => {
-    if (searchQuery.trim() === "") {
+    if (!searchQuery || searchQuery.trim() === "") {
       setFilteredBookmarks(bookmarks);
-    } else {
-      const query = searchQuery.toLowerCase();
-      const filtered = bookmarks.filter(
-        (paper) =>
-          paper.title.toLowerCase().includes(query) ||
-          paper.authors.toLowerCase().includes(query) ||
-          paper.primary_department.toLowerCase().includes(query) ||
-          paper.abstract.toLowerCase().includes(query)
-      );
-      setFilteredBookmarks(filtered);
+      return;
     }
+
+    const q = searchQuery.toLowerCase().trim();
+    const filtered = bookmarks.filter((paper) => {
+      return (
+        (paper.title || "").toLowerCase().includes(q) ||
+        (paper.authors || "").toLowerCase().includes(q) ||
+        (paper.primary_department || "").toLowerCase().includes(q) ||
+        (paper.abstract || "").toLowerCase().includes(q)
+      );
+    });
+    setFilteredBookmarks(filtered);
   }, [searchQuery, bookmarks]);
 
   const handleRemoveBookmark = async (paperId) => {
+    setRemovingIds((prev) => new Set(prev).add(paperId));
+    setBookmarks((prev) => prev.filter((p) => p.paper_id !== paperId));
+    setFilteredBookmarks((prev) => prev.filter((p) => p.paper_id !== paperId));
+
     try {
-      const res = await axios.post(
+      const token = localStorage.getItem("accessToken");
+      await axios.post(
         "http://localhost:4000/api/service/removebookmark",
         {
-          reg_no: "2021831040",
+          reg_no: user.reg_no,
           paper_id: paperId,
         },
         {
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
       );
-
-      // Update UI
-      setBookmarks((prev) => prev.filter((p) => p.paper_id !== paperId));
     } catch (error) {
       console.error("Error removing bookmark:", error);
+    } finally {
+      setRemovingIds((prev) => {
+        const clone = new Set(prev);
+        clone.delete(paperId);
+        return clone;
+      });
     }
   };
 
   const handleViewPaper = (paperId) => {
-    // Navigate to paper detail page
-    console.log("Navigating to paper:", paperId);
-    // In real app: window.location.href = `/papers/${paperId}` or use Next.js router
+    // TODO: replace with your router/navigation (e.g. react-router's useNavigate)
+    window.location.href = `/paper/${paperId}`;
   };
 
-  if (loading) {
+  if (userLoading || localLoading) {
     return (
       <div className="min-h-screen bg-green-50 p-6">
         <div className="max-w-5xl mx-auto">
@@ -337,8 +366,6 @@ const BookmarkSection = () => {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
             />
-
-            {/* Results count */}
             {searchQuery && (
               <div className="mb-4">
                 <p className="text-gray-700">
@@ -353,7 +380,6 @@ const BookmarkSection = () => {
           </>
         )}
 
-        {/* Paper List */}
         {bookmarks.length === 0 ? (
           <EmptyState />
         ) : filteredBookmarks.length === 0 ? (
@@ -362,10 +388,14 @@ const BookmarkSection = () => {
           <div className="space-y-4">
             {filteredBookmarks.map((paper) => (
               <PaperCard
-                key={paper.paper_id}
+                key={paper.paper_id || paper.id}
                 paper={paper}
-                onRemoveBookmark={handleRemoveBookmark}
-                onViewPaper={handleViewPaper}
+                onRemoveBookmark={() =>
+                  handleRemoveBookmark(paper.paper_id || paper.id)
+                }
+                onViewPaper={() => handleViewPaper(paper.paper_id || paper.id)}
+                // optionally pass a prop to disable remove while in-flight
+                removing={removingIds.has(paper.paper_id || paper.id)}
               />
             ))}
           </div>

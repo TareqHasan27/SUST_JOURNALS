@@ -144,7 +144,6 @@ exports.recommendedPapers = async (req, res) => {
       [reg_no, reg_no]
     );
 
-    // Format rows for clean JSON output
     const formatted = rows.map((paper) => ({
       paper_id: paper.paper_id,
       title: paper.title,
@@ -157,9 +156,8 @@ exports.recommendedPapers = async (req, res) => {
 
       authors: paper.authors ? paper.authors.split("||") : [],
       keywords: paper.keywords ? paper.keywords.split("||") : [],
-      is_bookmarked: !!paper.is_bookmark
+      isBookmarked: !!paper.is_bookmark,
     }));
-
     return res.status(200).json({
       status: true,
       message: "Recommended papers fetched successfully.",
@@ -174,3 +172,5 @@ exports.recommendedPapers = async (req, res) => {
     });
   }
 };
+
+exports.fetchPaper = async () => {};

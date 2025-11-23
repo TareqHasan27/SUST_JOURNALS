@@ -54,10 +54,15 @@ exports.updateUserProfile = async (req, res) => {
     if (Array.isArray(research_interests) && research_interests.length > 0) {
       const [existingRows] = await db
         .promise()
-        .query("SELECT interest FROM user_research_interests WHERE reg_no = ?", [reg_no]);
+        .query(
+          "SELECT interest FROM user_research_interests WHERE reg_no = ?",
+          [reg_no]
+        );
 
       const existingInterests = existingRows.map((r) => r.interest);
-      const newInterests = research_interests.filter((i) => !existingInterests.includes(i));
+      const newInterests = research_interests.filter(
+        (i) => !existingInterests.includes(i)
+      );
 
       if (newInterests.length > 0) {
         const valuesToInsert = newInterests.map((i) => [reg_no, i]);
@@ -76,6 +81,10 @@ exports.updateUserProfile = async (req, res) => {
   } catch (error) {
     return res
       .status(400)
-      .json({ message: "Error occured.", error: error.message, status: "failed" });
+      .json({
+        message: "Error occured.",
+        error: error.message,
+        status: "failed",
+      });
   }
 };

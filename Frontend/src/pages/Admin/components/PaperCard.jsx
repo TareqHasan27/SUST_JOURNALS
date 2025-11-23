@@ -34,12 +34,12 @@ const PaperCard = ({ paper, onClick }) => (
       </div>
       <div className="flex items-center gap-2">
         <Mail className="w-4 h-4" />
-        <span>{paper.email}</span>
+        <span>{paper.author_email}</span>
       </div>
     </div>
 
     <div className="mt-3 flex flex-wrap gap-2">
-      {paper.keywords.slice(0, 3).map((keyword, idx) => (
+      {paper.keywords?.slice(0, 3).map((keyword, idx) => (
         <span
           key={idx}
           className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"

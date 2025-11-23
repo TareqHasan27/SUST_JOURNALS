@@ -9,9 +9,9 @@ const authRouter = require("./routes/authRoutes");
 const userRouter = require("../src/routes/userRoutes");
 const serviceRouter = require("./routes/serviceRoute");
 const searchRouter = require("./routes/searchRoutes");
-// const pdfUploadRouter = require("./routes/pdfUploadRoutes");
+const pdfUploadRouter = require("./routes/pdfUploadRoutes");
 const chatRouter = require("./routes/chat"); // Make sure this file exists
-// const adminRouter = require("./routes/adminRoutes");
+const adminRouter = require("./routes/adminRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,9 +25,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/auth", authRouter);
 app.use("/api/profile", userRouter);
 app.use("/api/service", serviceRouter);
-// app.use("/api/pdf", pdfUploadRouter);
-//app.use("/api/overview", chatRouter);
-// app.use("/api/admin", adminRouter);
+app.use("/api/pdf", pdfUploadRouter);
+app.use("/api/overview", chatRouter);
+app.use("/api/admin", adminRouter);
 app.use("/api/papers", searchRouter);
 
 // Start server

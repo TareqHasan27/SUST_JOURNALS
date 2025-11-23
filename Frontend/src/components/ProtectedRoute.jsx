@@ -1,18 +1,30 @@
-import { getData } from '@/context/userContext'
-import React from 'react'
-import { Navigate } from 'react-router-dom'
-
+import { Navigate } from "react-router-dom";
+import { getData } from "./userContext";
+import ChatbotButton from "@/pages/chatbot/ChatbotButton";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = getData()
-  console.log("ProtectedRoute user:", user);
-  return (
-    <div>
-      {
-        user ? children : <Navigate to={'/login'} />
-      }
-    </div>
-  )
-}
+  const { user, loading } = getData();
 
-export default ProtectedRoute
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin border-green-600" />
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/login" replace />;
+
+  if (user.role !== "student") {
+    return <Navigate to={`/admin`} replace />;
+  }
+
+  return (
+    <>
+      {children}
+      <ChatbotButton />
+    </>
+  );
+};
+
+export default ProtectedRoute;

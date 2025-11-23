@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,55 +9,93 @@ import {
   Search,
   Eye,
   Sparkle,
-  X,
+  Bookmark,
 } from "lucide-react";
-import LeftSection from "./LeftSection";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { getData } from "@/components/userContext";
 
-const departments = [
-  { id: 1, name: "Computer Science & Engineering", short_code: "CSE" },
-  { id: 2, name: "Physics", short_code: "PHY" },
-  { id: 3, name: "Chemistry", short_code: "CHE" },
-  { id: 4, name: "Mathematics", short_code: "MAT" },
-  { id: 5, name: "Electrical & Electronic Engineering", short_code: "EEE" },
-  { id: 6, name: "Biology", short_code: "BIO" },
-];
+const SearchBar = ({ searchData, setSearchData, onSearch, searching }) => {
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      onSearch();
+    }
+  };
 
-const SearchBar = ({ value, onChange, onSearch, onClear }) => (
-  <div className="mb-6">
-    <div className="relative flex gap-2">
-      <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-        <input
-          type="search"
-          placeholder="Search papers by title, author, or keyword..."
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && onSearch()}
-          className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-        />
-        {value && (
-          <button
-            onClick={onClear}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
+  return (
+    <div className="mb-4 bg-white p-4 rounded-lg shadow-sm border">
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">
+        Search Papers
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        {/* Title Search */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Paper Title
+          </label>
+          <input
+            type="text"
+            placeholder="Enter paper title..."
+            value={searchData.title}
+            onChange={(e) =>
+              setSearchData({ ...searchData, title: e.target.value })
+            }
+            onKeyPress={handleKeyPress}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          />
+        </div>
+
+        {/* Author Search */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Author Name
+          </label>
+          <input
+            type="text"
+            placeholder="Enter author name..."
+            value={searchData.author}
+            onChange={(e) =>
+              setSearchData({ ...searchData, author: e.target.value })
+            }
+            onKeyPress={handleKeyPress}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          />
+        </div>
+
+        {/* Department Search */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Keywords
+          </label>
+          <input
+            type="text"
+            placeholder="Enter keywords..."
+            value={searchData.keyword}
+            onChange={(e) =>
+              setSearchData({ ...searchData, keyword: e.target.value })
+            }
+            onKeyPress={handleKeyPress}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          />
+        </div>
       </div>
-      <Button
-        onClick={onSearch}
-        className="bg-green-600 hover:bg-green-700 text-white px-6"
-      >
-        <Search className="w-4 h-4 mr-2" />
-        Search
-      </Button>
-    </div>
-  </div>
-);
 
-const PaperCard = ({ paper, onViewPaper }) => {
+      {/* Search Button */}
+      <div className="flex justify-end">
+        <Button
+          onClick={onSearch}
+          disabled={searching}
+          className="bg-green-600 hover:bg-green-700 text-white px-8"
+        >
+          <Search className="w-4 h-4 mr-2" />
+          {searching ? "Searching..." : "Search"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+const PaperCard = ({ paper, onViewPaper, onBookmark }) => {
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -69,7 +107,7 @@ const PaperCard = ({ paper, onViewPaper }) => {
   const navigate = useNavigate();
 
   const handleAiOverview = () => {
-    navigate(`/overview/${paper.id || paper.paper_id}`);
+    navigate(`/overview/${paper.paper_id}`);
   };
 
   return (
@@ -159,6 +197,21 @@ const PaperCard = ({ paper, onViewPaper }) => {
               <ExternalLink className="w-4 h-4 mr-2" />
               View Paper
             </Button>
+            <Button
+              onClick={() => onBookmark(paper.id || paper.paper_id)}
+              disabled={paper.isBookmarked}
+              className={`
+                flex-1 md:flex-none text-white 
+                ${
+                  paper.isBookmarked
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700"
+                }
+              `}
+            >
+              <Bookmark className="w-4 h-4 mr-2" />
+              {paper.isBookmarked ? "Bookmarked" : "Add Bookmark"}
+            </Button>
           </div>
         </div>
       </CardContent>
@@ -177,14 +230,12 @@ const EmptyState = () => (
   </Card>
 );
 
-const NoResults = ({ q }) => (
+const NoResults = () => (
   <Card className="border">
     <CardContent className="py-12 text-center">
       <div className="text-gray-700 mb-2">No papers found</div>
       <div className="text-gray-500">
-        {q
-          ? `No results for "${q}". Try different keywords.`
-          : "Try searching for papers."}
+        Try different search criteria or check your filters.
       </div>
     </CardContent>
   </Card>
@@ -194,17 +245,15 @@ export default function HomeSection() {
   const [papers, setPapers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
-  const navigate = useNavigate();
-  const [filters, setFilters] = useState({
-    query: "",
-    author: "",
-    department: "",
-    keywords: [],
-    publishedAfter: "",
-    sort: "newest",
-  });
-  const [searchInput, setSearchInput] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const navigate = useNavigate();
+  const { user } = getData();
+
+  const [searchData, setSearchData] = useState({
+    title: "",
+    author: "",
+    keyword: "",
+  });
 
   // Initial load of recommended papers
   useEffect(() => {
@@ -221,9 +270,7 @@ export default function HomeSection() {
             },
           }
         );
-
-        setPapers(res.data);
-        console.log("papers info", papers);
+        setPapers(res.data.data);
       } catch (error) {
         console.error("Error fetching recommended papers:", error);
         setPapers([]);
@@ -236,32 +283,36 @@ export default function HomeSection() {
   }, []);
 
   // Search papers from backend
-  const searchPapers = async () => {
+  const handleSearch = async () => {
     try {
       setSearching(true);
       setHasSearched(true);
       const token = localStorage.getItem("accessToken");
 
-      // Build search payload
+      // Build search payload - only include non-empty fields
       const searchPayload = {};
 
-      if (searchInput.trim()) {
-        // Use searchInput as title/keyword search
-        searchPayload.title = searchInput.trim();
+      if (searchData.title.trim()) {
+        searchPayload.title = searchData.title.trim();
       }
 
-      if (filters.author) {
-        searchPayload.author = filters.author;
+      if (searchData.author.trim()) {
+        searchPayload.author = searchData.author.trim();
       }
 
-      // If no search criteria, don't search
-      if (!searchPayload.title && !searchPayload.author) {
+      if (searchData.keyword.trim()) {
+        searchPayload.keyword = searchData.keyword.trim();
+      }
+
+      if (Object.keys(searchPayload).length === 0) {
         setSearching(false);
         return;
       }
 
+      console.log("Search Payload:", searchPayload);
+
       const res = await axios.post(
-        "http://localhost:4000/api/service/searchpublishedpaper",
+        "http://localhost:4000/api/papers/published",
         searchPayload,
         {
           headers: {
@@ -270,7 +321,7 @@ export default function HomeSection() {
           },
         }
       );
-
+      console.log("res", res);
       setPapers(res.data.papers || []);
     } catch (error) {
       console.error("Error searching papers:", error);
@@ -280,115 +331,28 @@ export default function HomeSection() {
     }
   };
 
-  const handleSearch = () => {
-    searchPapers();
-  };
-
-  const handleClearSearch = () => {
-    setSearchInput("");
-    setHasSearched(false);
-    // Reload recommended papers
-    const fetchPapers = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("accessToken");
-
-        const res = await axios.get(
-          "http://localhost:4000/api/service/recomandedpapers",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        setPapers(res.data);
-      } catch (error) {
-        console.error("Error fetching recommended papers:", error);
-        setPapers([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPapers();
-  };
-
-  const availableKeywords = useMemo(() => {
-    const s = new Set();
-    papers.forEach((p) => p.keywords?.forEach((k) => s.add(k)));
-    return Array.from(s);
-  }, [papers]);
-
-  const availableAuthors = useMemo(() => {
-    const s = new Set();
-    papers.forEach((p) => {
-      if (Array.isArray(p.authors)) {
-        p.authors.forEach((a) => s.add(a));
-      }
-    });
-    return Array.from(s);
-  }, [papers]);
-
-  // Frontend filtering for department, keywords, publishedAfter, and sort
-  const filteredPapers = useMemo(() => {
-    let list = papers.slice();
-
-    // Filter by department
-    if (filters.department) {
-      list = list.filter((p) =>
-        (p.department_name || p.primary_department || "")
-          .toLowerCase()
-          .includes(filters.department.toLowerCase())
-      );
-    }
-
-    // Filter by keywords (frontend only, as backend doesn't support yet)
-    if (filters.keywords?.length) {
-      list = list.filter((p) =>
-        filters.keywords.every((kw) => p.keywords?.includes(kw))
-      );
-    }
-
-    // Filter by publishedAfter
-    if (filters.publishedAfter) {
-      const cutoff = new Date(filters.publishedAfter);
-      list = list.filter((p) => {
-        if (!p.publication_date) return false;
-        return new Date(p.publication_date) >= cutoff;
-      });
-    }
-
-    // Sort
-    if (filters.sort === "newest") {
-      list.sort((a, b) => {
-        const dateA = new Date(a.publication_date || 0);
-        const dateB = new Date(b.publication_date || 0);
-        return dateB - dateA;
-      });
-    } else if (filters.sort === "popular") {
-      list.sort((a, b) => (b.view_count || 0) - (a.view_count || 0));
-    }
-
-    return list;
-  }, [papers, filters]);
-
-  const clearFilters = () => {
-    setFilters({
-      query: "",
-      author: "",
-      department: "",
-      keywords: [],
-      publishedAfter: "",
-      sort: "newest",
-    });
-    setSearchInput("");
-    handleClearSearch();
-  };
-
   const handleViewPaper = (paperId) => {
-    navigate(`/article/${paperId}`);
+    navigate(`/paper/${paperId}`);
+  };
+
+  const handleBookmark = async (paperId) => {
+    try {
+      const res = await axios.post(
+        `http://localhost:4000/api/service/addbookmark`,
+        {
+          reg_no: user.reg_no,
+          paper_id: paperId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Bookmark added successfully", res);
+    } catch (error) {
+      console.log("Bookmark not added", error);
+    }
   };
 
   if (loading) {
@@ -408,68 +372,46 @@ export default function HomeSection() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
-        {/* Left filters */}
-        <div className="md:col-span-3">
-          <LeftSection
-            filters={filters}
-            setFilters={setFilters}
-            availableKeywords={availableKeywords}
-            availableAuthors={availableAuthors}
-            availableDepartments={departments}
-            clearFilters={clearFilters}
-            onSearch={searchPapers}
-          />
-        </div>
-
-        {/* Right content */}
-        <div className="md:col-span-9">
-          <div className="mb-4">
-            <SearchBar
-              value={searchInput}
-              onChange={setSearchInput}
-              onSearch={handleSearch}
-              onClear={handleClearSearch}
-            />
+      <div className="max-w-5xl mx-auto">
+        <SearchBar
+          searchData={searchData}
+          setSearchData={setSearchData}
+          onSearch={handleSearch}
+          searching={searching}
+        />
+        {hasSearched && (
+          <div className="mb-4 text-sm text-gray-600">
+            Found {papers.length} paper{papers.length !== 1 ? "s" : ""}
           </div>
+        )}
 
-          {/* Results count */}
-          {hasSearched && (
-            <div className="mb-4 text-sm text-gray-600">
-              Found {filteredPapers.length} paper
-              {filteredPapers.length !== 1 ? "s" : ""}
+        {/* Loading state */}
+        {searching && (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+              <p className="text-gray-600">Searching...</p>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Loading state */}
-          {searching && (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <div className="w-12 h-12 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                <p className="text-gray-600">Searching...</p>
-              </div>
-            </div>
-          )}
+        {/* Papers List */}
+        {!searching && (
+          <div className="space-y-4">
+            {!hasSearched && papers.length === 0 && <EmptyState />}
 
-          {/* List */}
-          {!searching && (
-            <div className="space-y-4">
-              {!hasSearched && papers.length === 0 && <EmptyState />}
+            {hasSearched && papers.length === 0 && <NoResults />}
 
-              {hasSearched && filteredPapers.length === 0 && (
-                <NoResults q={searchInput} />
-              )}
-
-              {filteredPapers.map((paper) => (
-                <PaperCard
-                  key={paper.id || paper.paper_id}
-                  paper={paper}
-                  onViewPaper={handleViewPaper}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+            {papers.map((paper) => (
+              <PaperCard
+                key={paper.id || paper.paper_id}
+                paper={paper}
+                onViewPaper={handleViewPaper}
+                onBookmark={handleBookmark}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

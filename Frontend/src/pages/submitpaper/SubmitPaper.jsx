@@ -10,6 +10,8 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
+import axios from "axios";
+import { getData } from "@/components/userContext";
 
 // Mock departments - Replace with API call
 const departments = [
@@ -422,7 +424,7 @@ const SuccessModal = ({ show, onClose, paperId }) => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-green-50 bg-opacity-50 flex items-center justify-center z-50 p-4">
       <Card className="max-w-md w-full">
         <CardContent className="pt-6 text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -452,7 +454,6 @@ const SuccessModal = ({ show, onClose, paperId }) => {
   );
 };
 
-// Main Component
 const PaperSubmissionForm = () => {
   const [formData, setFormData] = useState({
     title: "",
@@ -472,6 +473,7 @@ const PaperSubmissionForm = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [submittedPaperId, setSubmittedPaperId] = useState(null);
   const [error, setError] = useState("");
+  const { user } = getData();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -507,30 +509,31 @@ const PaperSubmissionForm = () => {
       setSubmitting(true);
 
       const paperData = {
-        ...formData,
+        title: formData.title,
+        abstract: formData.abstract,
+        department_id: formData.department_id,
+        created_by: user.reg_no,
         pdf_url: pdfUrl,
+        pdf_text: formData.pdf_text,
+        publication_date: formData.publication_date,
         authors: authors,
-        reference: reference,
-        tags: selectedTags,
+        references: reference,
+        keywords: selectedTags,
       };
 
       console.log("paper data", paperData);
       console.log("Submitting paper data:", authors);
       console.log("ref", reference);
 
-      const response = await fetch("http://localhost:4000/api/papers/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(paperData),
-      });
+      const res = await axios.post(
+        "http://localhost:4000/api/service/uploadpaper",
+        paperData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Submission failed");
-      }
-
-      const result = await response.json();
-      setSubmittedPaperId(result.paperId);
+      setSubmittedPaperId(res.data.paperId);
       setShowSuccess(true);
     } catch (error) {
       console.error("Error submitting paper:", error);

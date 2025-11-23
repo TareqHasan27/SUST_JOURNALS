@@ -1,5 +1,6 @@
 import React from "react";
 import { BookOpen, Mail, Eye, Download, ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const PublicationsList = ({ publications }) => {
   const formatDate = (dateString) => {
@@ -9,15 +10,14 @@ const PublicationsList = ({ publications }) => {
       day: "numeric",
     });
   };
+  const navigate = useNavigate();
 
   const handleViewPaper = (paperId) => {
-    console.log("View paper:", paperId);
-    // Add navigation logic here
+    navigate(`/paper/${paperId}`);
   };
 
   const handleAiOverview = (paperId) => {
-    console.log("AI Overview for paper:", paperId);
-    // Add navigation logic here
+    navigate(`/overview/${paperId}`);
   };
 
   return (
@@ -28,8 +28,8 @@ const PublicationsList = ({ publications }) => {
 
       <div className="space-y-4">
         {publications.map((paper) => (
-          <div 
-            key={paper.id} 
+          <div
+            key={paper.id}
             className="border border-green-200 rounded-lg p-6 hover:shadow-lg transition-all duration-300"
           >
             <div className="flex flex-col md:flex-row gap-4">
@@ -62,10 +62,6 @@ const PublicationsList = ({ publications }) => {
                   <div className="flex items-center gap-1">
                     <Mail className="w-3 h-3" />
                     <span>Published: {formatDate(paper.publicationDate)}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Eye className="w-3 h-3" />
-                    <span>{paper.viewCount} views</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Download className="w-3 h-3" />
@@ -104,7 +100,6 @@ const PublicationsList = ({ publications }) => {
           </div>
         ))}
       </div>
-
     </div>
   );
 };

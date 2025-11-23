@@ -1,5 +1,14 @@
 import React from "react";
-import { ArrowLeft, User, Mail, Calendar, CheckCircle, XCircle, Clock, Send } from "lucide-react";
+import {
+  ArrowLeft,
+  User,
+  Mail,
+  Calendar,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Send,
+} from "lucide-react";
 import AdminPDFViewer from "../../Common/AdminPDFViewer";
 
 const PaperDetail = ({
@@ -9,7 +18,7 @@ const PaperDetail = ({
   setReviewAction,
   setReviewComment,
   handleSubmitReview,
-  goBack
+  goBack,
 }) => (
   <div>
     <button
@@ -19,7 +28,6 @@ const PaperDetail = ({
       <ArrowLeft className="w-4 h-4" />
       Back to Dashboard
     </button>
-
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
       {/* Header */}
       <div className="border-b border-gray-200 pb-6 mb-6">
@@ -43,15 +51,21 @@ const PaperDetail = ({
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
           <div className="flex items-center gap-2">
             <User className="w-4 h-4" />
-            <span><strong>Author:</strong> {paper.author}</span>
+            <span>
+              <strong>Author:</strong> {paper.author}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4" />
-            <span><strong>Email:</strong> {paper.email}</span>
+            <span>
+              <strong>Email:</strong> {paper.email}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
-            <span><strong>Submitted:</strong> {paper.submissionDate}</span>
+            <span>
+              <strong>Submitted:</strong> {paper.submissionDate}
+            </span>
           </div>
         </div>
       </div>
@@ -68,8 +82,11 @@ const PaperDetail = ({
       <div className="mb-6">
         <h3 className="text-xl font-semibold text-gray-900 mb-3">Keywords</h3>
         <div className="flex flex-wrap gap-2">
-          {paper.keywords.map((keyword, idx) => (
-            <span key={idx} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
+          {paper.keywords?.map((keyword, idx) => (
+            <span
+              key={idx}
+              className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm"
+            >
               {keyword}
             </span>
           ))}
@@ -79,17 +96,18 @@ const PaperDetail = ({
       {/* PDF Viewer */}
       <AdminPDFViewer pdfUrl={paper.pdfUrl} />
 
-
       {/* Review Section */}
       {paper.status === "pending" && (
         <div className="border-t border-gray-200 pt-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Review Decision</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            Review Decision
+          </h3>
 
           <div className="mb-4 flex gap-3">
             <button
-              onClick={() => setReviewAction("accept")}
+              onClick={() => setReviewAction("accepted")}
               className={`flex-1 px-4 py-3 rounded-lg border-2 ${
-                reviewAction === "accept"
+                reviewAction === "accepted"
                   ? "border-green-500 bg-green-50 text-green-700"
                   : "border-gray-300 hover:border-green-300"
               }`}
@@ -111,9 +129,9 @@ const PaperDetail = ({
             </button>
 
             <button
-              onClick={() => setReviewAction("reject")}
+              onClick={() => setReviewAction("rejected")}
               className={`flex-1 px-4 py-3 rounded-lg border-2 ${
-                reviewAction === "reject"
+                reviewAction === "rejected"
                   ? "border-red-500 bg-red-50 text-red-700"
                   : "border-gray-300 hover:border-red-300"
               }`}
@@ -133,7 +151,7 @@ const PaperDetail = ({
           />
 
           <button
-            onClick={handleSubmitReview}
+            onClick={() => handleSubmitReview(paper)}
             disabled={!reviewAction || !reviewComment.trim()}
             className="w-full bg-green-500 text-white px-6 py-3 rounded-lg font-medium mt-4 hover:bg-green-700 disabled:bg-gray-300"
           >
