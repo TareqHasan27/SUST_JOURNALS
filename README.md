@@ -1,4 +1,4 @@
-# SUST Journals
+# SUST Journal
 
 A comprehensive academic research paper management and discovery platform designed for universities to facilitate scholarly communication, paper submissions, and research collaboration.
 
